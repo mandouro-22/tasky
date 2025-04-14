@@ -1,3 +1,4 @@
+"use client";
 import DottedSeparatoo from "@/components/dotted-separator";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
@@ -20,10 +21,11 @@ import {
 } from "@/validations/auth/sign-in-schema";
 import Link from "next/link";
 import { useLogin } from "../api/use-login";
+import { Loader } from "lucide-react";
 
 export default function SignInCard() {
   // mutation
-  const { mutate } = useLogin();
+  const { mutate, isPending } = useLogin();
 
   const form = useForm<inferSignInSchema>({
     resolver: zodResolver(SignInSchema),
@@ -59,6 +61,7 @@ export default function SignInCard() {
                   <FormControl>
                     <Input
                       type="email"
+                      disabled={isPending}
                       placeholder="Enter Your Email"
                       {...field}
                     />
@@ -76,6 +79,7 @@ export default function SignInCard() {
                   <FormControl>
                     <Input
                       type="password"
+                      disabled={isPending}
                       placeholder="Enter Your Password"
                       {...field}
                     />
@@ -85,8 +89,17 @@ export default function SignInCard() {
               )}
             />
 
-            <Button type="submit" size={"lg"} className="w-full">
-              Login
+            <Button
+              type="submit"
+              disabled={isPending}
+              size={"lg"}
+              className="w-full"
+            >
+              {isPending ? (
+                <Loader className="animate-spin size-4" />
+              ) : (
+                "Register"
+              )}
             </Button>
           </form>
         </Form>
@@ -95,7 +108,7 @@ export default function SignInCard() {
       <CardContent className="flex flex-col gap-3">
         <Button
           variant={"secondary"}
-          disabled={false}
+          disabled={isPending}
           size={"lg"}
           className="w-full"
         >
@@ -104,7 +117,7 @@ export default function SignInCard() {
         </Button>
         <Button
           variant={"secondary"}
-          disabled={false}
+          disabled={isPending}
           size={"lg"}
           className="w-full"
         >

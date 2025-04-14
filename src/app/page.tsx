@@ -1,17 +1,15 @@
-import { Button } from "@/components/ui/button";
+import { getCurrent } from "@/feature/auth/action";
+import { UserButton } from "@/feature/auth/components/user-button";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const user = await getCurrent();
+
+  if (!user) return redirect("/sign-in");
+
   return (
-    <div className="flex items-center justify-center gap-4 my-4">
-      <Button variant={"primary"} size={"lg"}>
-        default
-      </Button>
-      <Button variant={"destructive"}>destructive</Button>
-      <Button variant={"ghost"}>ghost</Button>
-      <Button variant={"muted"}>muted</Button>
-      <Button variant={"outline"}>outline</Button>
-      <Button variant={"secondary"}>secondary</Button>
-      <Button variant={"teritary"}>teritary</Button>
+    <div>
+      <UserButton />
     </div>
   );
 }

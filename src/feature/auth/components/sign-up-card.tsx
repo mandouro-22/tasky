@@ -1,3 +1,4 @@
+"use client";
 import DottedSeparatoo from "@/components/dotted-separator";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
@@ -27,10 +28,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useRegister } from "../api/use-register";
+import { Loader } from "lucide-react";
 
 export default function SignUpCard() {
   // mutation
-  const { mutate } = useRegister();
+  const { mutate, isPending } = useRegister();
 
   const form = useForm<inferSignUpSchema>({
     resolver: zodResolver(SignUpSchema),
@@ -77,6 +79,7 @@ export default function SignUpCard() {
                   <FormControl>
                     <Input
                       type="text"
+                      disabled={isPending}
                       placeholder="Enter Your Name"
                       {...field}
                     />
@@ -94,6 +97,7 @@ export default function SignUpCard() {
                   <FormControl>
                     <Input
                       type="email"
+                      disabled={isPending}
                       placeholder="Enter Your Email"
                       {...field}
                     />
@@ -111,6 +115,7 @@ export default function SignUpCard() {
                   <FormControl>
                     <Input
                       type="password"
+                      disabled={isPending}
                       placeholder="Enter Your Password"
                       {...field}
                     />
@@ -120,8 +125,17 @@ export default function SignUpCard() {
               )}
             />
 
-            <Button type="submit" size={"lg"} className="w-full">
-              Login
+            <Button
+              type="submit"
+              disabled={isPending}
+              size={"lg"}
+              className="w-full"
+            >
+              {isPending ? (
+                <Loader className="animate-spin size-4" />
+              ) : (
+                "Register"
+              )}
             </Button>
           </form>
         </Form>
@@ -130,7 +144,7 @@ export default function SignUpCard() {
       <CardContent className="flex flex-col gap-3">
         <Button
           variant={"secondary"}
-          disabled={false}
+          disabled={isPending}
           size={"lg"}
           className="w-full"
         >
@@ -139,7 +153,7 @@ export default function SignUpCard() {
         </Button>
         <Button
           variant={"secondary"}
-          disabled={false}
+          disabled={isPending}
           size={"lg"}
           className="w-full"
         >
