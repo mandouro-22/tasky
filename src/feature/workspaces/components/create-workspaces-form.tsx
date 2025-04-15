@@ -19,7 +19,10 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { UseCreateWorkspaces } from "../api/use-create-workspace";
-import { Loader } from "lucide-react";
+import { ImageIcon, Loader } from "lucide-react";
+import { useRef } from "react";
+import Image from "next/image";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface CreateWorkspacesFormProps {
   onCancel?: () => void;
@@ -29,15 +32,28 @@ export default function CreateWorkSpacesForm({
   onCancel,
 }: CreateWorkspacesFormProps) {
   const { mutate, isPending } = UseCreateWorkspaces();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<inferCreateWorkspacesSchema>({
     resolver: zodResolver(CreateWorkspacesSchema),
     defaultValues: { name: "" },
   });
 
+  const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("imageUrl", file);
+    }
+  };
+
   const onSubmit = (data: inferCreateWorkspacesSchema) => {
-    console.log(data);
-    mutate(data);
+    const finalData = {
+      ...data,
+      imageUrl: data.imageUrl instanceof File ? data.imageUrl : "",
+    };
+
+    // console.log(finalData);
+    mutate(finalData);
     console.log(onCancel);
   };
 
@@ -74,7 +90,63 @@ export default function CreateWorkSpacesForm({
               )}
             />
 
-            <div className="flex items-center justify-between gap-3 space-y-6">
+            <FormField
+              name="imageUrl"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="mt-6">
+                  <div className="flex gap-4">
+                    {field.value ? (
+                      <Image
+                        src={
+                          field.value instanceof File
+                            ? URL.createObjectURL(field.value)
+                            : field.value || ""
+                        }
+                        width={73}
+                        height={73}
+                        alt="Workspace Image"
+                        className="object-cover size-[73px] rounded-md"
+                      />
+                    ) : (
+                      <Avatar className="size-[73px]">
+                        <AvatarFallback>
+                          <ImageIcon className="size-[36px] text-neutral-500" />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+
+                    <div className="flex flex-col">
+                      <p className="text-sm">Workspace Icon</p>
+                      <p className="text-xs text-muted-foreground">
+                        Upload a workspace icon. (PNG, JPG, svg, JPEG), max 2mb
+                      </p>
+
+                      <Input
+                        type="file"
+                        accept=".jpg, .jpeg, .png, .svg"
+                        className="hidden"
+                        ref={inputRef}
+                        onChange={handleChangeImage}
+                        disabled={isPending}
+                      />
+
+                      <Button
+                        type="button"
+                        variant={"outline"}
+                        className="mt-2 w-full"
+                        onClick={() => inputRef.current?.click()}
+                        disabled={isPending}
+                      >
+                        Update Image
+                      </Button>
+                    </div>
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <div className="flex items-center justify-between gap-3 my-4">
               <Button
                 type="button"
                 variant={"outline"}

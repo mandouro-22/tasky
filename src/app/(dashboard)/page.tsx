@@ -8,7 +8,7 @@ export default async function Home() {
   if (!user) return redirect("/sign-in");
 
   return (
-    <div className="border border-gray-700  bg-gray-400">
+    <div className="border border-gray-200 shadow-md rounded-lg">
       <CreateWorkSpacesForm />
     </div>
   );

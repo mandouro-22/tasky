@@ -8,14 +8,14 @@ type ResponseType = InferResponseType<
 >;
 type RequestType = InferRequestType<
   (typeof client.api.workspaces.workspaces)["$post"]
->["json"];
+>["form"];
 
 export const UseCreateWorkspaces = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (json) => {
+    mutationFn: async (form) => {
       const response = await client.api.workspaces.workspaces["$post"]({
-        json,
+        form,
       });
 
       if (!response.ok) {

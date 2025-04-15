@@ -14,7 +14,7 @@ export default function AuthLayout({ children }: ChildrenProps) {
   const isLoginIn = pathName === "/sign-in";
   return (
     <main>
-      <div className="bg-neutral-100 min-h-screen">
+      <div className="bg-neutral-50 min-h-screen">
         <div className="mx-auto max-w-screen-2xl p-4">
           <nav className="flex items-center justify-between">
             <Image
