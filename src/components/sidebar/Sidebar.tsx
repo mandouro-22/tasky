@@ -4,6 +4,7 @@ import Logo from "../../../public/assets/logo.png";
 import React from "react";
 import DottedSeparatoo from "../dotted-separator";
 import { Navigation } from "./Navigation";
+import WorkspaceSwitcher from "../workspace/workspace-switcher";
 
 export default function Sidebar() {
   return (
@@ -17,6 +18,7 @@ export default function Sidebar() {
           className="rounded-full object-cover"
         />
       </Link>
+      <WorkspaceSwitcher />
       <DottedSeparatoo className="my-4" />
       <Navigation />
     </aside>
