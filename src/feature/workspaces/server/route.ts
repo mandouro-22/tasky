@@ -1,14 +1,47 @@
-import { DATABASE_ID, IMAGE_BUCKET_ID, WORKSPACES_ID } from "@/config";
+import {
+  DATABASE_ID,
+  IMAGE_BUCKET_ID,
+  MEMBERS_ID,
+  WORKSPACES_ID,
+} from "@/config";
 import { sessionMiddleware } from "@/lib/session_middleware";
-import { CreateWorkspacesSchema } from "@/validations/workspaces/workspaces_schema";
+import { Member_Role } from "@/feature/members/types/type";
+import {
+  CreateWorkspacesSchema,
+  UpdateWorkspacesSchema,
+} from "@/validations/workspaces/workspaces_schema";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { ID } from "node-appwrite";
+import { ID, Query } from "node-appwrite";
+import { generateInviteCode } from "@/lib/utils";
+import { getMembers } from "@/feature/members/utils";
+import { uploadImageAsBase64 } from "@/lib/uploadImaqge";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
     const database = c.get("databases");
-    const workspaces = await database.listDocuments(DATABASE_ID, WORKSPACES_ID);
+    const user = c.get("user");
+    const members = await database.listDocuments(DATABASE_ID, MEMBERS_ID, [
+      Query.equal("userId", user.$id),
+    ]);
+
+    if (members.total === 0) {
+      return c.json({
+        status: 200,
+        success: true,
+        message: "member is not found",
+        error: null,
+        data: { total: 0, documents: [] },
+      });
+    }
+
+    const workspacesId = members.documents.map((member) => member.workspaceId);
+
+    const workspaces = await database.listDocuments(
+      DATABASE_ID,
+      WORKSPACES_ID,
+      [Query.orderDesc("$createdAt"), Query.contains("$id", workspacesId)]
+    );
 
     return c.json({
       status: 200,
@@ -30,24 +63,14 @@ const app = new Hono()
 
       const { name, imageUrl } = c.req.valid("form");
 
-      // Check if the workspace already exists
       let uploadedImageUrl: string | undefined;
 
       if (imageUrl instanceof File) {
-        const file = await storage.createFile(
-          IMAGE_BUCKET_ID,
-          ID.unique(),
-          imageUrl
+        uploadedImageUrl = await uploadImageAsBase64(
+          storage,
+          imageUrl,
+          IMAGE_BUCKET_ID
         );
-
-        const arrayBuffer = await storage.getFileDownload(
-          IMAGE_BUCKET_ID,
-          file.$id
-        );
-
-        uploadedImageUrl = `data:image/png;base64,${Buffer.from(
-          arrayBuffer
-        ).toString("base64")}`;
       }
 
       const workspace = await database.createDocument(
@@ -58,6 +81,72 @@ const app = new Hono()
           name,
           userId: user.$id,
           imageUrl: uploadedImageUrl,
+          inviteCode: generateInviteCode(6),
+        }
+      );
+
+      await database.createDocument(DATABASE_ID, MEMBERS_ID, ID.unique(), {
+        userId: user.$id,
+        workspaceId: workspace.$id,
+        role: Member_Role.ADMIN,
+      });
+
+      return c.json({
+        status: 200,
+        error: null,
+        success: true,
+        message: "add workspace successfully",
+        data: workspace,
+      });
+    }
+  )
+
+  .patch(
+    "/:workspaceId",
+    sessionMiddleware,
+    zValidator("form", UpdateWorkspacesSchema),
+    async (c) => {
+      const databases = c.get("databases");
+      const storage = c.get("storage");
+      const user = c.get("user");
+
+      const { workspaceId } = c.req.param();
+      const { imageUrl, name } = c.req.valid("form");
+
+      const member = await getMembers({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member || member.role !== Member_Role.ADMIN)
+        return c.json({
+          status: 401,
+          error: true,
+          success: false,
+          message: "UnAuthorized",
+          data: null,
+        });
+
+      let uploadedImageUrl: string | undefined;
+
+      if (imageUrl instanceof File) {
+        uploadedImageUrl = await uploadImageAsBase64(
+          storage,
+          imageUrl,
+          IMAGE_BUCKET_ID
+        );
+      } else {
+        uploadedImageUrl = imageUrl;
+      }
+
+      const workspace = await databases.updateDocument(
+        DATABASE_ID,
+        WORKSPACES_ID,
+        workspaceId,
+        {
+          name,
+          imageUrl: uploadedImageUrl,
         }
       );
 
@@ -65,7 +154,7 @@ const app = new Hono()
         status: 200,
         error: null,
         success: true,
-        message: "add workspace successfully",
+        message: "Update workspace successfully",
         data: workspace,
       });
     }

@@ -19,7 +19,7 @@ const app = new Hono()
         data: user,
       });
     } catch (error) {
-      console.log("error in current user in the server", error);
+      console.error("error in current user in the server", error);
       return c.json({
         status: 500,
         message: error,
@@ -53,7 +53,7 @@ const app = new Hono()
         },
       });
     } catch (error) {
-      console.log("error in login file in server" + error);
+      console.error("error in login file in server" + error);
       return c.json({
         status: 500,
         message: error,
@@ -82,7 +82,7 @@ const app = new Hono()
         data: user,
       });
     } catch (error) {
-      console.log("error in register file in server" + error);
+      console.error("error in register file in server" + error);
       return c.json({
         status: 500,
         message: error,
@@ -103,7 +103,7 @@ const app = new Hono()
         message: "Logout Successfuly",
       });
     } catch (error) {
-      console.log("error in logout file in server" + error);
+      console.error("error in logout file in server" + error);
       return c.json({
         status: 500,
         message: error,

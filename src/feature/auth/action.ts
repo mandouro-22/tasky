@@ -18,7 +18,7 @@ export const getCurrent = async () => {
     const account = new Account(client);
     return await account.get();
   } catch (error) {
-    console.log("error in action file with auth" + error);
+    console.error("error in action file with auth" + error);
     return null;
   }
 };
