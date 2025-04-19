@@ -1,4 +1,4 @@
-import { getCurrent } from "@/feature/auth/action";
+import { getCurrent } from "@/feature/auth/query";
 import { redirect } from "next/navigation";
 
 export default async function WorkspaceIdPage() {

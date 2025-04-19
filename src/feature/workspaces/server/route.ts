@@ -16,6 +16,8 @@ import { ID, Query } from "node-appwrite";
 import { generateInviteCode } from "@/lib/utils";
 import { getMembers } from "@/feature/members/utils";
 import { uploadImageAsBase64 } from "@/lib/uploadImaqge";
+import { z } from "zod";
+import { Workspace } from "../type";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
@@ -155,6 +157,135 @@ const app = new Hono()
         error: null,
         success: true,
         message: "Update workspace successfully",
+        data: workspace,
+      });
+    }
+  )
+
+  .delete("/:workspaceId", sessionMiddleware, async (c) => {
+    const databases = c.get("databases");
+    const user = c.get("user");
+
+    const { workspaceId } = c.req.param();
+
+    const member = await getMembers({
+      databases,
+      workspaceId,
+      userId: user.$id,
+    });
+
+    // TODO: Delete Members, Projects, and Tasks
+
+    if (!member || member.role !== Member_Role.ADMIN)
+      return c.json({
+        status: 401,
+        success: false,
+        error: true,
+        message: "UnAuthorized",
+        data: null,
+      });
+
+    await databases.deleteDocument(DATABASE_ID, WORKSPACES_ID, workspaceId);
+
+    return c.json({
+      status: 200,
+      success: true,
+      error: false,
+      message: "Workspace Deleted Successfully",
+      data: { $id: workspaceId },
+    });
+  })
+
+  .post("/:workspaceId/reset_inviteCode", sessionMiddleware, async (c) => {
+    const databases = c.get("databases");
+    const user = c.get("user");
+
+    const { workspaceId } = c.req.param();
+
+    const member = await getMembers({
+      databases,
+      workspaceId,
+      userId: user.$id,
+    });
+
+    if (!member || member.role !== Member_Role.ADMIN)
+      return c.json({
+        status: 401,
+        success: false,
+        error: true,
+        message: "UnAuthorized",
+        data: null,
+      });
+
+    const workspace = await databases.updateDocument(
+      DATABASE_ID,
+      WORKSPACES_ID,
+      workspaceId,
+      { inviteCode: generateInviteCode(6) }
+    );
+
+    return c.json({
+      status: 200,
+      success: true,
+      error: false,
+      message: "Update invite code successfully",
+      data: workspace,
+    });
+  })
+
+  .post(
+    "/:workspaceId/join",
+    sessionMiddleware,
+    zValidator("json", z.object({ code: z.string() })),
+    async (c) => {
+      const { workspaceId } = c.req.param();
+      const { code } = c.req.valid("json");
+
+      const databases = c.get("databases");
+      const user = c.get("user");
+
+      const member = await getMembers({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if (member)
+        return c.json({
+          status: 400,
+          success: false,
+          error: true,
+          message: "Already a member",
+          data: null,
+        });
+
+      const workspace = await databases.getDocument<Workspace>(
+        DATABASE_ID,
+        WORKSPACES_ID,
+        workspaceId
+      );
+
+      if (workspace.inviteCode !== code) {
+        return c.json({
+          status: 400,
+          success: false,
+          error: true,
+          message: "Invalid invite code",
+          data: null,
+        });
+      }
+
+      await databases.createDocument(DATABASE_ID, MEMBERS_ID, ID.unique(), {
+        workspaceId,
+        userId: user.$id,
+        role: Member_Role.MEMBER,
+      });
+
+      return c.json({
+        status: 200,
+        success: true,
+        error: false,
+        message: "Joined workspace successfully",
         data: workspace,
       });
     }

@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
-import { getCurrent } from "@/feature/auth/action";
-import { getWorkspaces } from "@/feature/workspaces/action";
+import { getCurrent } from "@/feature/auth/query";
+import { getWorkspaces } from "@/feature/workspaces/query";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
