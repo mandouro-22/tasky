@@ -23,6 +23,8 @@ import { ImageIcon, Loader } from "lucide-react";
 import { useRef } from "react";
 import Image from "next/image";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 interface CreateWorkspacesFormProps {
   onCancel?: () => void;
@@ -33,6 +35,8 @@ export default function CreateWorkSpacesForm({
 }: CreateWorkspacesFormProps) {
   const { mutate, isPending } = UseCreateWorkspaces();
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const router = useRouter();
 
   const form = useForm<inferCreateWorkspacesSchema>({
     resolver: zodResolver(CreateWorkspacesSchema),
@@ -52,9 +56,12 @@ export default function CreateWorkSpacesForm({
       imageUrl: data.imageUrl instanceof File ? data.imageUrl : "",
     };
 
-    // console.log(finalData);
-    mutate(finalData);
-    console.log(onCancel);
+    mutate(finalData, {
+      onSuccess: ({ data }) => {
+        form.reset();
+        router.push(`/workspaces/${data.$id}`);
+      },
+    });
   };
 
   return (
@@ -131,15 +138,32 @@ export default function CreateWorkSpacesForm({
                         disabled={isPending}
                       />
 
-                      <Button
-                        type="button"
-                        variant={"outline"}
-                        className="mt-2 w-full"
-                        onClick={() => inputRef.current?.click()}
-                        disabled={isPending}
-                      >
-                        Update Image
-                      </Button>
+                      {field.value ? (
+                        <Button
+                          type="button"
+                          variant={"destructive"}
+                          className="mt-2 w-full"
+                          onClick={() => {
+                            field.onChange(null);
+                            if (inputRef.current) {
+                              inputRef.current.value = "";
+                            }
+                          }}
+                          disabled={isPending}
+                        >
+                          Remove Image
+                        </Button>
+                      ) : (
+                        <Button
+                          type="button"
+                          variant={"outline"}
+                          className="mt-2 w-full"
+                          onClick={() => inputRef.current?.click()}
+                          disabled={isPending}
+                        >
+                          Update Image
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </FormItem>
@@ -152,6 +176,7 @@ export default function CreateWorkSpacesForm({
                 variant={"outline"}
                 onClick={onCancel}
                 disabled={isPending}
+                className={cn(!onCancel && "invisible")}
               >
                 Cancel
               </Button>

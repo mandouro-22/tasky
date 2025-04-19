@@ -20,7 +20,7 @@ export const UseCreateWorkspaces = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Create Workspace Filed");
+        throw new Error(errorData.message || "Create Workspace Failed");
       }
       return await response.json();
     },

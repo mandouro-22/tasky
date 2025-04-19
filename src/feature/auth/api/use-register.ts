@@ -20,7 +20,7 @@ export const useRegister = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Register Filed");
+        throw new Error(errorData.message || "Register Failed");
       }
 
       return await response.json();
@@ -28,6 +28,8 @@ export const useRegister = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["workspaces"] });
+
       router.push("/");
       toast.success("Registered successfully 👍🏻");
     },

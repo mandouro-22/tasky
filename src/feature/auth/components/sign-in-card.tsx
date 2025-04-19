@@ -95,11 +95,7 @@ export default function SignInCard() {
               size={"lg"}
               className="w-full"
             >
-              {isPending ? (
-                <Loader className="animate-spin size-4" />
-              ) : (
-                "Register"
-              )}
+              {isPending ? <Loader className="animate-spin size-4" /> : "Login"}
             </Button>
           </form>
         </Form>

@@ -1,5 +1,6 @@
-import { getCurrent } from "@/feature/auth/action";
-import CreateWorkSpacesForm from "@/feature/workspaces/components/create-workspaces-form";
+export const dynamic = "force-dynamic";
+import { getCurrent } from "@/feature/auth/query";
+import { getWorkspaces } from "@/feature/workspaces/query";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
@@ -7,9 +8,10 @@ export default async function Home() {
 
   if (!user) return redirect("/sign-in");
 
-  return (
-    <div className="border border-gray-200 shadow-md rounded-lg">
-      <CreateWorkSpacesForm />
-    </div>
-  );
+  const workspace = await getWorkspaces();
+
+  if (!workspace.documents?.[0]?.$id) return redirect("/workspaces/create");
+
+  if (workspace.total === 0) return redirect("/workspaces/create");
+  else return redirect(`/workspaces/${workspace.documents[0].$id}`);
 }

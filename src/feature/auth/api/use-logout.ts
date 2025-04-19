@@ -15,16 +15,18 @@ export const useLogout = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Logout Filed");
+        throw new Error(errorData.message || "Logout Failed");
       }
 
       return await response.json();
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-      router.push("/sign-in");
+      router.replace("/sign-in");
       toast.success("Logout successfully 👍🏻");
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["workspaces"] });
+      queryClient.clear();
     },
 
     onError: () => {

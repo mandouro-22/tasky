@@ -18,7 +18,7 @@ export const useLogin = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Login Filed");
+        throw new Error(errorData.message || "Login Failed");
       }
 
       return await response.json();
@@ -26,6 +26,7 @@ export const useLogin = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["workspaces"] });
       route.push("/");
       toast.success("Login successfully 👍🏻");
     },
