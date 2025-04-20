@@ -5,21 +5,19 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 type ResponseType = InferResponseType<
-  (typeof client.api.workspaces)[":workspaceId"]["reset_inviteCode"]["$post"],
+  (typeof client.api.projects)[":projectId"]["$delete"],
   200
 >;
 type RequestType = InferRequestType<
-  (typeof client.api.workspaces)[":workspaceId"]["reset_inviteCode"]["$post"]
+  (typeof client.api.projects)[":projectId"]["$delete"]
 >;
 
-export function useUpdateInviteCodeWorkspace() {
+export function useDeleteProject() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ param }) => {
-      const response = await client.api.workspaces[":workspaceId"][
-        "reset_inviteCode"
-      ]["$post"]({
+      const response = await client.api.projects[":projectId"]["$delete"]({
         param,
       });
 
@@ -27,14 +25,14 @@ export function useUpdateInviteCodeWorkspace() {
     },
 
     onSuccess: ({ data }) => {
-      toast.success("Workspace reset invite code");
-      router.refresh();
-      queryClient.invalidateQueries({ queryKey: ["workspaces"] });
-      queryClient.invalidateQueries({ queryKey: ["workspace", data?.$id] });
+      toast.success("Project Deleted Successfully");
+      router.push("/");
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["project", data?.$id] });
     },
 
     onError: () => {
-      toast.error("Failed to reset invite code");
+      toast.error("Failed to delete Project");
     },
   });
 

@@ -4,37 +4,37 @@ import { InferRequestType, InferResponseType } from "hono";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-type ResponseType = InferResponseType<(typeof client.api.projects)["$post"]>;
+type ResponseType = InferResponseType<
+  (typeof client.api.projects)[":projectId"]["$patch"],
+  200
+>;
 type RequestType = InferRequestType<
-  (typeof client.api.projects)["$post"]
->["form"];
+  (typeof client.api.projects)[":projectId"]["$patch"]
+>;
 
-export const UseCreateProject = () => {
+export const useUpdateProject = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (form) => {
-      const response = await client.api.projects["$post"]({
+    mutationFn: async ({ form, param }) => {
+      const response = await client.api.projects[":projectId"]["$patch"]({
         form,
+        param,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Create Project Failed");
-      }
+      if (!response.ok) throw new Error("Failed to update Project");
       return await response.json();
     },
 
     onSuccess: ({ data }) => {
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-      toast.success("Project created 👍🏻");
+      toast.success("Projec Updated");
+      router.refresh();
       router.push(`/workspaces/${data?.workspaceId}/projects/${data?.$id}`);
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["project", data?.$id] });
     },
-
     onError: () => {
-      toast.error("Field to create project");
+      toast.error("Failed to create projec");
     },
   });
-
   return mutation;
 };

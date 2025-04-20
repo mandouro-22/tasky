@@ -1,6 +1,7 @@
 import { client } from "@/lib/Rpc";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 type ResponseType = InferResponseType<
@@ -12,6 +13,7 @@ type RequestType = InferRequestType<
 >;
 
 export function useDeleteWorkspace() {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ param }) => {
@@ -24,6 +26,7 @@ export function useDeleteWorkspace() {
 
     onSuccess: ({ data }) => {
       toast.success("Workspace Deleted Successfully");
+      router.push("/");
       queryClient.invalidateQueries({ queryKey: ["workspaces"] });
       queryClient.invalidateQueries({ queryKey: ["workspace", data?.$id] });
     },

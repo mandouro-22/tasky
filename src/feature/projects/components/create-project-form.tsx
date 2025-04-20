@@ -60,11 +60,8 @@ export default function CreateProjectsForm({
     };
     console.log(finalData);
     mutate(finalData, {
-      onSuccess: ({ data }) => {
+      onSuccess: () => {
         form.reset();
-        console.log(data);
-
-        // TODO: Redirect to project screen.
       },
     });
   };

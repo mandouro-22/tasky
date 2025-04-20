@@ -1,6 +1,9 @@
 import { ProjectAvatar } from "@/components/projects/project-avatar";
+import { Button } from "@/components/ui/button";
 import { getCurrent } from "@/feature/auth/query";
 import { getProject } from "@/feature/projects/queries";
+import { Pen } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -31,7 +34,17 @@ export default async function ProjectIdPage({ params }: ProjectIdParams) {
             className="size-10"
             fallbackClassName="size-10"
           />
+          <h1 className="text-base font-bold">{initialValues.name}</h1>
         </div>
+        <Button variant={"secondary"}>
+          <Link
+            href={`/workspaces/${initialValues.workspaceId}/projects/${initialValues.$id}/settings`}
+            className="flex items-center gap-2"
+          >
+            <Pen />
+            Edit Project
+          </Link>
+        </Button>
       </div>
     </div>
   );
