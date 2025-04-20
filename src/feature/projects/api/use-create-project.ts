@@ -29,6 +29,7 @@ export const UseCreateProject = () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast.success("Project created 👍🏻");
       router.push(`/workspaces/${data?.workspaceId}/projects/${data?.$id}`);
+      router.refresh();
     },
 
     onError: () => {

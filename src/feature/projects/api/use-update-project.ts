@@ -27,10 +27,10 @@ export const useUpdateProject = () => {
 
     onSuccess: ({ data }) => {
       toast.success("Projec Updated");
-      router.refresh();
       router.push(`/workspaces/${data?.workspaceId}/projects/${data?.$id}`);
       queryClient.invalidateQueries({ queryKey: ["projects"] });
-      queryClient.invalidateQueries({ queryKey: ["project", data?.$id] });
+      queryClient.invalidateQueries({ queryKey: ["projects", data?.$id] });
+      router.refresh();
     },
     onError: () => {
       toast.error("Failed to create projec");
