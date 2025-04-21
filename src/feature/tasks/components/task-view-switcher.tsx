@@ -1,0 +1,68 @@
+"use client";
+import React from "react";
+import DottedSeparatoo from "@/components/dotted-separator";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader, PlusIcon } from "lucide-react";
+import { useCreateTasksModel } from "../hooks/use-create-tasks-model";
+import { useWorkspaceId } from "@/feature/workspaces/hooks/use-workspace-id";
+import { useGetTasks } from "../api/use-get-tasks";
+import { useQueryState } from "nuqs";
+
+export default function TaskViewSwitcher() {
+  const [view, setView] = useQueryState("tab-tasks", {
+    defaultValue: "tabel",
+  });
+  const workspaceId = useWorkspaceId();
+  const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({
+    workspaceId,
+  });
+  const { open } = useCreateTasksModel();
+
+  return (
+    <Tabs
+      defaultValue={view}
+      onValueChange={setView}
+      className="flex-1 border rounded-lg w-full"
+    >
+      <div className="h-full flex flex-col overflow-auto p-4">
+        <div className="flex flex-col gap-y-2 lg:flex-row justify-between items-center">
+          <TabsList className="w-full lg:w-auto">
+            <TabsTrigger value="tabel" className="h-8 w-full lg:w-auto">
+              Tabel
+            </TabsTrigger>
+            <TabsTrigger value="kanban" className="h-8 w-full lg:w-auto">
+              Kanban
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="h-8 w-full lg:w-auto">
+              Calendar
+            </TabsTrigger>
+          </TabsList>
+          <Button size={"sm"} className="w-full lg:w-auto" onClick={open}>
+            <PlusIcon className="size-4" />
+            New
+          </Button>
+        </div>
+        <DottedSeparatoo className="my-3" />
+
+        {isLoadingTasks ? (
+          <div className="h-full w-full flex items-center justify-center flex-col">
+            <Loader className="size-6 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+          <>
+            <TabsContent value="tabel" className="mt-0">
+              {JSON.stringify(tasks)}
+            </TabsContent>
+            <TabsContent value="kanban" className="mt-0">
+              {JSON.stringify(tasks)}
+            </TabsContent>
+            <TabsContent value="calendar" className="mt-0">
+              {JSON.stringify(tasks)}
+            </TabsContent>
+          </>
+        )}
+      </div>
+    </Tabs>
+  );
+}

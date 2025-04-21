@@ -2,6 +2,7 @@ import { ProjectAvatar } from "@/components/projects/project-avatar";
 import { Button } from "@/components/ui/button";
 import { getCurrent } from "@/feature/auth/query";
 import { getProject } from "@/feature/projects/queries";
+import TaskViewSwitcher from "@/feature/tasks/components/task-view-switcher";
 import { Pen } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -46,6 +47,7 @@ export default async function ProjectIdPage({ params }: ProjectIdParams) {
           </Link>
         </Button>
       </div>
+      <TaskViewSwitcher />
     </div>
   );
 }
