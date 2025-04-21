@@ -33,7 +33,7 @@ export const useUpdateProject = () => {
       router.refresh();
     },
     onError: () => {
-      toast.error("Failed to create projec");
+      toast.error("Failed to create project");
     },
   });
   return mutation;

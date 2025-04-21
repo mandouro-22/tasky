@@ -29,7 +29,6 @@ export default function Projects() {
       {data?.data?.documents.map((project) => {
         const href = `/workspaces/${workspaceId}/projects/${project.$id}`;
         const isActive = pathname === href;
-        console.log(project);
         return (
           <Link href={href} key={project.$id}>
             <div
