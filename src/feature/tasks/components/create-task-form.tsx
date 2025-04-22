@@ -68,8 +68,8 @@ export function CreateTaskForm({
   projectOptions,
   memberOptions,
 }: CreateTaskFormWrapperProps) {
-  const { mutate, isPending } = useCreateTask();
   const workspaceId = useWorkspaceId();
+  const { mutate, isPending } = useCreateTask();
 
   const form = useForm<CreateTasksSchemaType>({
     resolver: zodResolver(createTaskSchema),

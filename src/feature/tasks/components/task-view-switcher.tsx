@@ -8,14 +8,24 @@ import { useCreateTasksModel } from "../hooks/use-create-tasks-model";
 import { useWorkspaceId } from "@/feature/workspaces/hooks/use-workspace-id";
 import { useGetTasks } from "../api/use-get-tasks";
 import { useQueryState } from "nuqs";
+import DataFilter from "./data-filter";
+import { useTasksFilter } from "../hooks/use-tasks-filter";
+import { DataTable } from "./data-tabel";
+import { columns } from "./columns";
 
 export default function TaskViewSwitcher() {
   const [view, setView] = useQueryState("tab-tasks", {
     defaultValue: "tabel",
   });
+  const [{ assigneeId, dueDate, projectId, search, status }] = useTasksFilter();
   const workspaceId = useWorkspaceId();
   const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({
     workspaceId,
+    search: search ?? undefined,
+    status: status ?? undefined,
+    projectId: projectId ?? undefined,
+    assigneeId: assigneeId ?? undefined,
+    dueDate: dueDate ?? undefined,
   });
   const { open } = useCreateTasksModel();
 
@@ -51,8 +61,15 @@ export default function TaskViewSwitcher() {
           </div>
         ) : (
           <>
+            <div className="w-full lg:w-fit px-2">
+              <DataFilter />
+            </div>
+
             <TabsContent value="tabel" className="mt-0">
-              {JSON.stringify(tasks)}
+              <DataTable
+                columns={columns}
+                data={tasks?.data?.documents ?? []}
+              />
             </TabsContent>
             <TabsContent value="kanban" className="mt-0">
               {JSON.stringify(tasks)}

@@ -11,6 +11,7 @@ import { Hono } from "hono";
 import { ID, Query } from "node-appwrite";
 import { buildTaskQuery } from "./buildTaskQuery";
 import { Project } from "@/feature/projects/type";
+import { Task } from "../type";
 
 const Tasks = new Hono()
   .get(
@@ -48,7 +49,11 @@ const Tasks = new Hono()
 
       const query = buildTaskQuery(workspaceId, filters, search);
 
-      const tasks = await databases.listDocuments(DATABASE_ID, TASKS_ID, query);
+      const tasks = await databases.listDocuments<Task>(
+        DATABASE_ID,
+        TASKS_ID,
+        query
+      );
 
       const projectIds = tasks.documents.map((task) => task.projectId);
       const assigneeIds = tasks.documents.map((task) => task.assigneeId);

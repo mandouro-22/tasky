@@ -27,8 +27,11 @@ export const useCreateTask = () => {
       return await response.json();
     },
     onSuccess: ({ data }) => {
+      router.refresh();
       toast.success("Added Task Successfully");
-      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({
+        queryKey: ["tasks"],
+      });
       router.push(
         `/workspaces/${data?.workspaceId}/projects/${data?.projectId}`
       );
