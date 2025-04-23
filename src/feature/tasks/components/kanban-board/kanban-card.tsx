@@ -36,7 +36,7 @@ export default function KanbanCard({ task }: KanbanCardProps) {
           name={task.project.name}
           image={task.project.imageUrl}
           fallbackClassName="text-sm"
-          className="size-6"
+          className="size-6 rounded-full"
         />
         <span className="text-xs font-medium capitalize">
           {task.project.name}

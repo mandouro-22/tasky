@@ -1,7 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Task, TasksStatus } from "../../type";
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  type DropResult,
+} from "@hello-pangea/dnd";
 import KanbanColumnHeader from "./kanban-column-header";
 import KanbanCard from "./kanban-card";
 
@@ -43,10 +48,17 @@ export const DataKanban = ({ data }: DataKanbanProps) => {
 
     return initialTasks;
   });
-  console.log(setTasks);
+
+  const onDragEnd = useCallback((result: DropResult) => {
+    if (!result.destination) return null;
+    const sourceStatus = result.source.droppableId as TasksStatus;
+    const destStatus = result.destination.droppableId as TasksStatus;
+    let updatesPayload: { $id: string; status: TasksStatus; position: number };
+  }, []);
+
   return (
     <DragDropContext onDragEnd={() => {}}>
-      <div className="flex overflow-x-auto">
+      <div className="flex overflow-x-auto mt-5">
         {boards.map((board) => {
           return (
             <div
@@ -82,6 +94,7 @@ export const DataKanban = ({ data }: DataKanbanProps) => {
                           )}
                         </Draggable>
                       ))}
+                      {provided.placeholder}
                     </div>
                   );
                 }}
