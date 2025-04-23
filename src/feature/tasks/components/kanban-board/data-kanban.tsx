@@ -24,9 +24,16 @@ type TaskStatus = {
 
 interface DataKanbanProps {
   data: Task[];
+  onChange: (
+    tasks: {
+      $id: string;
+      status: TaskStatus;
+      position: number;
+    }[]
+  ) => void;
 }
 
-export const DataKanban = ({ data }: DataKanbanProps) => {
+export const DataKanban = ({ data, onChange }: DataKanbanProps) => {
   const [tasks, setTasks] = useState<TaskStatus>(() => {
     const initialTasks: TaskStatus = {
       [TasksStatus.BACKLOG]: [],
@@ -49,15 +56,109 @@ export const DataKanban = ({ data }: DataKanbanProps) => {
     return initialTasks;
   });
 
-  const onDragEnd = useCallback((result: DropResult) => {
-    if (!result.destination) return null;
-    const sourceStatus = result.source.droppableId as TasksStatus;
-    const destStatus = result.destination.droppableId as TasksStatus;
-    let updatesPayload: { $id: string; status: TasksStatus; position: number };
-  }, []);
+  const calculatePosition = (index: number, step = 1000, max = 1_000_000) =>
+    Math.min((index + 1) * step, max);
+
+  const onDragEnd = useCallback(
+    (result: DropResult) => {
+      if (!result.destination) return null;
+      const sourceStatus = result.source.droppableId as TasksStatus;
+      const destStatus = result.destination.droppableId as TasksStatus;
+
+      let updatesPayload: {
+        $id: string;
+        status: TasksStatus;
+        position: number;
+      }[] = [];
+
+      setTasks((prevTasks) => {
+        const newTask = { ...prevTasks };
+
+        // Safe remove the task from the source column
+        const sourceColumn = [...newTask[sourceStatus]];
+        const [moveTask] = sourceColumn.splice(result.source.index, 1);
+
+        if (!moveTask) {
+          console.error("No Task Found at the source index");
+          return prevTasks;
+        }
+
+        // Create a new task object with potentially update status
+        const updateTask =
+          sourceStatus !== destStatus
+            ? { ...moveTask, status: destStatus }
+            : moveTask;
+
+        // Update the source column
+        newTask[sourceStatus] = sourceColumn;
+
+        // Insert the task into its new position in the destination column
+        const destColumn = [...newTask[destStatus]];
+        if (
+          result?.destination &&
+          typeof result.destination.index === "number"
+        ) {
+          destColumn.splice(result.destination.index, 0, updateTask);
+        }
+        newTask[destStatus] = destColumn;
+
+        // prepare minimal update payloads
+        updatesPayload = [];
+
+        // Always update the moved task
+        updatesPayload.push({
+          $id: updateTask.$id,
+          status: destStatus,
+          position: calculatePosition(result?.destination?.index ?? 0),
+        });
+
+        // Update Position for affected tasks in the destination column
+        newTask[destStatus].forEach((task, index) => {
+          if (task && task.$id === updateTask.$id) {
+            const newPosition = calculatePosition(index);
+
+            if (task.position !== newPosition) {
+              updatesPayload.push({
+                $id: task.$id,
+                status: destStatus,
+                position: newPosition,
+              });
+            }
+          }
+        });
+
+        // If the task moved between columns, update position in the source column.
+        if (sourceStatus !== destStatus) {
+          newTask[sourceStatus].forEach((task, index) => {
+            if (task) {
+              const newPosition = calculatePosition(index);
+              if (task.position !== newPosition) {
+                updatesPayload.push({
+                  $id: task.$id,
+                  status: sourceStatus,
+                  position: newPosition,
+                });
+              }
+            }
+          });
+        }
+
+        return newTask;
+      });
+
+      onChange(
+        updatesPayload as unknown as {
+          $id: string;
+          status: TaskStatus;
+          position: number;
+        }[]
+      );
+    },
+    [onChange]
+  );
 
   return (
-    <DragDropContext onDragEnd={() => {}}>
+    <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex overflow-x-auto mt-5">
         {boards.map((board) => {
           return (
