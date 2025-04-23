@@ -7,7 +7,7 @@ export const createTaskSchema = z.object({
   workspaceId: z.string().trim().min(1, { message: "workspaceId is required" }),
   projectId: z.string().trim().min(1, { message: "projectId is required" }),
   assigneeId: z.string().trim().min(1, { message: "assigneeId is required" }),
-  description: z.string().trim().optional(),
+  description: z.string().trim().nullable().optional(),
   dueDate: z.coerce.date(),
 });
 

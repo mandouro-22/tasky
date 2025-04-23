@@ -2,6 +2,7 @@ import Navbar from "@/components/navbar/Navbar";
 import Sidebar from "@/components/sidebar/Sidebar";
 import { CreateProjectModel } from "@/feature/projects/components/create-project-model";
 import { CreateTaskModel } from "@/feature/tasks/components/create-task-model";
+import { EditTaskModel } from "@/feature/tasks/components/edit-task-model";
 import { CreateWorkspaceModel } from "@/feature/workspaces/components/create-workspace-model";
 
 interface ChildrenProps {
@@ -13,6 +14,7 @@ export default function layout({ children }: ChildrenProps) {
       <CreateWorkspaceModel />
       <CreateProjectModel />
       <CreateTaskModel />
+      <EditTaskModel />
       <div className="flex w-full h-full">
         <div className="fixed left-0 top-0 hidden lg:block h-full lg:w-[264px] overflow-y-auto">
           <Sidebar />

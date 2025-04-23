@@ -1,6 +1,6 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, MoreVertical } from "lucide-react";
 import { Task, TasksStatus } from "../type";
 import { Button } from "@/components/ui/button";
 import { ProjectAvatar } from "@/components/projects/project-avatar";
@@ -8,6 +8,7 @@ import TaskDate from "./task-date";
 import MemberAvatar from "@/feature/members/components/member-avatar";
 import { Badge } from "@/components/ui/badge";
 import { snakeCaseToTitleCase } from "@/lib/utils";
+import TaskAction from "./task-action";
 export const columns: ColumnDef<Task>[] = [
   {
     accessorKey: "name",
@@ -62,7 +63,6 @@ export const columns: ColumnDef<Task>[] = [
       );
     },
     cell: ({ row }) => {
-      console.log(row);
       const assignee = row.original.assignee;
       return (
         <div className="flex items-center gap-x-2 text-sm font-medium">
@@ -112,9 +112,27 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const status = row.original.status as TasksStatus;
       return (
-        <div className="flex items-center gap-x-2 text-sm font-medium">
-          <Badge variant={status}>{snakeCaseToTitleCase(status)}</Badge>
+        <div className="flex items-center gap-x-2 text-sm font-medium ">
+          <Badge variant={status} className="capitalize">
+            {snakeCaseToTitleCase(status)}
+          </Badge>
         </div>
+      );
+    },
+  },
+  {
+    accessorKey: "Action",
+    id: "action",
+    cell: ({ row }) => {
+      const id = row.original.$id;
+      const projectId = row.original.projectId;
+
+      return (
+        <TaskAction id={id} projectId={projectId}>
+          <Button size={"sm"} variant={"ghost"}>
+            <MoreVertical />
+          </Button>
+        </TaskAction>
       );
     },
   },
