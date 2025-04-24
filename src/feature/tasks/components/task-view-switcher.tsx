@@ -15,6 +15,7 @@ import { columns } from "./columns";
 import { DataKanban, TaskStatus } from "./kanban-board/data-kanban";
 import { TasksStatus } from "../type";
 import { useBulkEditTask } from "../api/use-bulk-update-task";
+import { DataCalendar } from "./calendar-board/data-calendar";
 
 interface Tasks {
   $id: string;
@@ -103,7 +104,7 @@ export default function TaskViewSwitcher() {
               />
             </TabsContent>
             <TabsContent value="calendar" className="mt-0">
-              {JSON.stringify(tasks)}
+              <DataCalendar data={tasks?.data?.documents ?? []} />
             </TabsContent>
           </>
         )}
