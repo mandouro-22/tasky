@@ -16,7 +16,7 @@ import MemberAvatar from "@/feature/members/components/member-avatar";
 import { ProjectAvatar } from "@/components/projects/project-avatar";
 import { DatePicker } from "@/components/ui/date-picker";
 interface DataFilterProps {
-  hideProjectFilter?: string;
+  hideProjectFilter?: boolean;
 }
 
 const Status = [
@@ -126,32 +126,34 @@ export default function DataFilter({ hideProjectFilter }: DataFilterProps) {
           ))}
         </SelectContent>
       </Select>
-      <Select
-        disabled={isLoading}
-        defaultValue={projectId ?? undefined}
-        onValueChange={(value) => handleProjectChange(value)}
-      >
-        <SelectTrigger>
-          <div className="flex items-center gap-2">
-            <FolderIcon className="size-5" />
-            <SelectValue placeholder="All Projects" />
-          </div>
-        </SelectTrigger>
-        <SelectContent>
-          {projectOption?.map((project) => (
-            <SelectItem key={project.id} value={project.id}>
-              <div className="flex items-center gap-2">
-                <ProjectAvatar
-                  name={project.name}
-                  image={project.imageUrl}
-                  className="size-6"
-                />
-                {project.name}
-              </div>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {!hideProjectFilter && (
+        <Select
+          disabled={isLoading}
+          defaultValue={projectId ?? undefined}
+          onValueChange={(value) => handleProjectChange(value)}
+        >
+          <SelectTrigger>
+            <div className="flex items-center gap-2">
+              <FolderIcon className="size-5" />
+              <SelectValue placeholder="All Projects" />
+            </div>
+          </SelectTrigger>
+          <SelectContent>
+            {projectOption?.map((project) => (
+              <SelectItem key={project.id} value={project.id}>
+                <div className="flex items-center gap-2">
+                  <ProjectAvatar
+                    name={project.name}
+                    image={project.imageUrl}
+                    className="size-6"
+                  />
+                  {project.name}
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
       <DatePicker
         onChange={(value) =>
           setFilter({ dueDate: value ? value.toISOString() : null })
