@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Task, TasksStatus } from "../../type";
 import {
   DragDropContext,
@@ -18,7 +18,7 @@ const boards: TasksStatus[] = [
   TasksStatus.DONE,
 ];
 
-type TaskStatus = {
+export type TaskStatus = {
   [key in TasksStatus]: Task[];
 };
 
@@ -55,6 +55,28 @@ export const DataKanban = ({ data, onChange }: DataKanbanProps) => {
 
     return initialTasks;
   });
+
+  useEffect(() => {
+    const initialTasks: TaskStatus = {
+      [TasksStatus.BACKLOG]: [],
+      [TasksStatus.TODO]: [],
+      [TasksStatus.IN_PROGRESS]: [],
+      [TasksStatus.IN_REVIEW]: [],
+      [TasksStatus.DONE]: [],
+    };
+
+    data.forEach((task) => {
+      initialTasks[task.status as TasksStatus].push(task);
+    });
+
+    Object.keys(initialTasks).forEach((status) => {
+      initialTasks[status as TasksStatus].sort(
+        (a, b) => a.position - b.position
+      );
+    });
+
+    setTasks(initialTasks);
+  }, [data]);
 
   const calculatePosition = (index: number, step = 1000, max = 1_000_000) =>
     Math.min((index + 1) * step, max);

@@ -11,7 +11,8 @@ import { Hono } from "hono";
 import { ID, Query } from "node-appwrite";
 import { buildTaskQuery } from "./buildTaskQuery";
 import { Project } from "@/feature/projects/type";
-import { Task } from "../type";
+import { Task, TasksStatus } from "../type";
+import { z } from "zod";
 
 const Tasks = new Hono()
 
@@ -246,6 +247,90 @@ const Tasks = new Hono()
         message: "Add Task Successfully",
         data: task,
       });
+    }
+  )
+  .post(
+    "/bulk-update",
+    sessionMiddleware,
+    zValidator(
+      "json",
+      z.object({
+        tasks: z.array(
+          z.object({
+            $id: z.string(),
+            status: z.nativeEnum(TasksStatus),
+            position: z.number().int().positive().min(1000).max(1_000_000),
+          })
+        ),
+      })
+    ),
+    async (c) => {
+      const user = c.get("user");
+      const databases = c.get("databases");
+      const { tasks } = c.req.valid("json");
+
+      const taskIds = tasks.map((task) => task.$id);
+
+      const existingTasks = await databases.listDocuments<Task>(
+        DATABASE_ID,
+        TASKS_ID,
+        [Query.contains("$id", taskIds)]
+      );
+
+      const workspaceIds = new Set(
+        existingTasks.documents.map((task) => task.workspaceId)
+      );
+
+      if (workspaceIds.size !== 1) {
+        return c.json(
+          {
+            error: true,
+            success: false,
+            message: "All tasks smust belong to the same workspace",
+            data: null,
+          },
+          404
+        );
+      }
+
+      const workspaceId = workspaceIds.values().next().value;
+
+      const member = await getMembers({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member) {
+        return c.json(
+          {
+            error: true,
+            success: false,
+            message: "UnAuthorized",
+            data: null,
+          },
+          401
+        );
+      }
+
+      const updatedTasks = await Promise.all(
+        tasks.map((task) => {
+          return databases.updateDocument(DATABASE_ID, TASKS_ID, task.$id, {
+            status: task.status,
+            position: task.position,
+          });
+        })
+      );
+
+      return c.json(
+        {
+          error: false,
+          success: true,
+          message: "Update tasks successfully",
+          data: updatedTasks,
+        },
+        200
+      );
     }
   )
   .patch(
