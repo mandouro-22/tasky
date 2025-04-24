@@ -69,36 +69,22 @@ export default function EditWorkspaceForm({
     const ok = await confirmDialog();
     if (!ok) return;
 
-    deleteWorkspace(
-      {
-        param: {
-          workspaceId: initialValue.$id,
-        },
+    deleteWorkspace({
+      param: {
+        workspaceId: initialValue.$id,
       },
-      {
-        onSuccess: () => {
-          router.push("/");
-        },
-      }
-    );
+    });
   };
 
   const handleResetInviteCode = async () => {
     const ok = await confirmReset();
     if (!ok) return;
 
-    resetInviteCode(
-      {
-        param: {
-          workspaceId: initialValue.$id,
-        },
+    resetInviteCode({
+      param: {
+        workspaceId: initialValue.$id,
       },
-      {
-        onSuccess: () => {
-          router.refresh();
-        },
-      }
-    );
+    });
   };
 
   const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +125,22 @@ export default function EditWorkspaceForm({
       <ResetDialog />
       <Card className="w-full h-full border-none shadow-none">
         <CardHeader className="flex flex-grow gap-x-4 p-7 max-sm:!px-0 space-y-0">
-          <CardTitle>{initialValue.name}</CardTitle>
+          <div className="flex items-center justify-start gap-x-4">
+            <Button
+              type="button"
+              variant={"secondary"}
+              onClick={
+                onCancel
+                  ? onCancel
+                  : () => router.push(`/workspaces/${initialValue.$id}`)
+              }
+              disabled={isPending}
+            >
+              <ArrowLeft />
+              Back
+            </Button>
+            <CardTitle>{initialValue.name}</CardTitle>
+          </div>
         </CardHeader>
 
         <div className="px-7 max-sm:!px-0">
@@ -243,20 +244,7 @@ export default function EditWorkspaceForm({
                 )}
               />
 
-              <div className="flex items-center justify-between gap-3 my-4">
-                <Button
-                  type="button"
-                  variant={"secondary"}
-                  onClick={
-                    onCancel
-                      ? onCancel
-                      : () => router.push(`/workspaces/${initialValue.$id}`)
-                  }
-                  disabled={isPending}
-                >
-                  <ArrowLeft />
-                  Back
-                </Button>
+              <div className="flex items-center justify-end gap-3 my-4">
                 <Button disabled={isPending}>
                   {isPending ? (
                     <Loader className="animate-spin" />
@@ -279,13 +267,9 @@ export default function EditWorkspaceForm({
             </p>
 
             <div className="mt-4">
-              <div className="flex items-center gap-x-2">
+              <div className="flex items-center gap-1">
                 <Input disabled value={fullInviteCode} />
-                <Button
-                  onClick={handleInviteLink}
-                  variant={"secondary"}
-                  size={"xs"}
-                >
+                <Button onClick={handleInviteLink} variant={"secondary"}>
                   <CopyIcon className="size-5" />
                 </Button>
               </div>

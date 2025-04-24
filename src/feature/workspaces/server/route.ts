@@ -97,7 +97,7 @@ const app = new Hono()
         status: 200,
         error: null,
         success: true,
-        message: "add workspace successfully",
+        message: "Add Workspace Successfully",
         data: workspace,
       });
     }
