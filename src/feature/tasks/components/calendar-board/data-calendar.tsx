@@ -60,7 +60,7 @@ export function DataCalendar({ data }: DataCalendarProps) {
 
   return (
     <div className="mt-3">
-      <div className="sticky top-0 z-20 bg-white dark:bg-gray-900 px-4 py-2">
+      <div className="sticky top-0 z-20 bg-neutral-100 px-4 py-2">
         <CustomToolbar date={value} onNavigate={handleNavigate} />
       </div>
 

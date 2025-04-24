@@ -23,7 +23,13 @@ interface Tasks {
   position: number;
 }
 
-export default function TaskViewSwitcher() {
+interface TaskViewSwitcherProps {
+  hideProjectFilter?: boolean;
+}
+
+export default function TaskViewSwitcher({
+  hideProjectFilter,
+}: TaskViewSwitcherProps) {
   const [view, setView] = useQueryState("tab-tasks", {
     defaultValue: "tabel",
   });
@@ -88,7 +94,7 @@ export default function TaskViewSwitcher() {
         ) : (
           <>
             <div className="w-full lg:w-fit px-2">
-              <DataFilter />
+              <DataFilter hideProjectFilter={hideProjectFilter} />
             </div>
 
             <TabsContent value="tabel" className="mt-0">
