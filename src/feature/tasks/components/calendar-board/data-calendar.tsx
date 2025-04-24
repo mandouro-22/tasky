@@ -60,6 +60,10 @@ export function DataCalendar({ data }: DataCalendarProps) {
 
   return (
     <div className="mt-3">
+      <div className="sticky top-0 z-20 bg-white dark:bg-gray-900 px-4 py-2">
+        <CustomToolbar date={value} onNavigate={handleNavigate} />
+      </div>
+
       <Calendar
         localizer={localizer}
         events={events}
@@ -67,8 +71,8 @@ export function DataCalendar({ data }: DataCalendarProps) {
         defaultView="month"
         views={["month"]}
         showAllEvents
-        toolbar
-        className="h-full"
+        toolbar={false}
+        className="h-full overflow-x-auto"
         max={new Date(new Date().setFullYear(new Date().getFullYear() + 1))}
         formats={{
           weekdayFormat: (date, culture, localizer) =>
@@ -84,9 +88,9 @@ export function DataCalendar({ data }: DataCalendarProps) {
               status={event.status as TasksStatus}
             />
           ),
-          toolbar: () => (
-            <CustomToolbar date={value} onNavigate={handleNavigate} />
-          ),
+          // toolbar: () => (
+          //   <CustomToolbar date={value} onNavigate={handleNavigate} />
+          // ),
         }}
       />
     </div>

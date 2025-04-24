@@ -9,6 +9,7 @@
 }
 .rbc-month-row {
   @apply min-h-[180px] border-t border-x;
+  min-width: 800px !important;
 }
 :not(.rbc-month-row ~ .rbc-month-row).rbc-month-row {
   @apply rounded-t-md;
