@@ -29,7 +29,6 @@ export function useDeleteProject() {
       router.push("/");
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["project", data?.$id] });
-      router.refresh();
     },
 
     onError: () => {

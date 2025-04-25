@@ -39,8 +39,6 @@ export default function EventCard({
     router.push(`/workspaces/${workspaceId}/tasks/${id}`);
   };
 
-  console.log(assignee);
-
   return (
     <div className="px-2">
       <div

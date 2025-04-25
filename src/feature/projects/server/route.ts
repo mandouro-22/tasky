@@ -83,13 +83,15 @@ const Projects = new Hono()
       const { workspaceId } = c.req.valid("query");
 
       if (!workspaceId)
-        return c.json({
-          status: 400,
-          success: false,
-          error: true,
-          message: "Missing workspaceId",
-          data: null,
-        });
+        return c.json(
+          {
+            success: false,
+            error: true,
+            message: "Missing workspaceId",
+            data: null,
+          },
+          400
+        );
 
       const member = await getMembers({
         databases,
@@ -98,13 +100,15 @@ const Projects = new Hono()
       });
 
       if (!member) {
-        return c.json({
-          status: 403,
-          success: false,
-          error: true,
-          message: "UnAuthorized",
-          data: null,
-        });
+        return c.json(
+          {
+            success: false,
+            error: true,
+            message: "UnAuthorized",
+            data: null,
+          },
+          403
+        );
       }
 
       const projects = await databases.listDocuments(DATABASE_ID, PROJECTS_ID, [
@@ -112,15 +116,57 @@ const Projects = new Hono()
         Query.orderDesc("$createdAt"),
       ]);
 
-      return c.json({
-        status: 200,
-        success: true,
-        error: false,
-        message: "Get Prjects Successfully",
-        data: projects,
-      });
+      return c.json(
+        {
+          success: true,
+          error: false,
+          message: "Get Prjects Successfully",
+          data: projects,
+        },
+        200
+      );
     }
   )
+  .get("/:projectId", sessionMiddleware, async (c) => {
+    const user = c.get("user");
+    const databases = c.get("databases");
+
+    const { projectId } = c.req.param();
+
+    const project = await databases.getDocument<Project>(
+      DATABASE_ID,
+      PROJECTS_ID,
+      projectId
+    );
+
+    const member = await getMembers({
+      databases,
+      workspaceId: project.workspaceId,
+      userId: user.$id,
+    });
+
+    if (!member) {
+      return c.json(
+        {
+          success: false,
+          error: true,
+          message: "UnAuthorized",
+          data: null,
+        },
+        403
+      );
+    }
+
+    return c.json(
+      {
+        success: true,
+        error: false,
+        message: "Get Prject Successfully",
+        data: project,
+      },
+      200
+    );
+  })
   .patch(
     "/:projectId",
     sessionMiddleware,

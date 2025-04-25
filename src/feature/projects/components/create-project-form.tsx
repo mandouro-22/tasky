@@ -58,7 +58,7 @@ export default function CreateProjectsForm({
       imageUrl: data.imageUrl instanceof File ? data.imageUrl : "",
       workspaceId,
     };
-    console.log(finalData);
+
     mutate(finalData, {
       onSuccess: () => {
         form.reset();

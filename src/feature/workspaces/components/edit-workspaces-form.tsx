@@ -76,6 +76,9 @@ export default function EditWorkspaceForm({
     });
   };
 
+  console.log(form.formState.errors);
+  console.log(form.control._fields);
+
   const handleResetInviteCode = async () => {
     const ok = await confirmReset();
     if (!ok) return;

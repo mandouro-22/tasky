@@ -54,6 +54,73 @@ const app = new Hono()
     });
   })
 
+  .get("/:workspaceId", sessionMiddleware, async (c) => {
+    const user = c.get("user");
+    const databases = c.get("databases");
+
+    const { workspaceId } = c.req.param();
+
+    const workspace = await databases.getDocument<Workspace>(
+      DATABASE_ID,
+      WORKSPACES_ID,
+      workspaceId
+    );
+
+    const member = await getMembers({
+      databases,
+      workspaceId,
+      userId: user.$id,
+    });
+
+    if (!member) {
+      return c.json(
+        {
+          success: false,
+          error: true,
+          message: "UnAuthorized",
+          data: null,
+        },
+        403
+      );
+    }
+
+    return c.json(
+      {
+        success: true,
+        error: false,
+        message: "Get Workspace Successfully",
+        data: workspace,
+      },
+      200
+    );
+  })
+
+  .get("/:workspaceId/info", sessionMiddleware, async (c) => {
+    const databases = c.get("databases");
+
+    const { workspaceId } = c.req.param();
+
+    const workspace = await databases.getDocument<Workspace>(
+      DATABASE_ID,
+      WORKSPACES_ID,
+      workspaceId
+    );
+
+    return c.json(
+      {
+        success: true,
+        error: false,
+        message: "Get Workspace Successfully",
+        data: {
+          $id: workspace.$id,
+          name: workspace.name,
+          imageUrl: workspace.imageUrl,
+        },
+      },
+      200
+    );
+  })
+
   .post(
     "/workspaces",
     zValidator("form", CreateWorkspacesSchema),

@@ -17,10 +17,12 @@ export const UpdateWorkspacesSchema = z.object({
     .min(1, { message: "Must be 1 or more characters" })
     .optional(),
   imageUrl: z
-    .union([
-      z.instanceof(File),
-      z.string().transform((value) => (value === "" ? undefined : value)),
-    ])
+    .any()
+    .transform((value) => {
+      if (value instanceof File) return value;
+      if (typeof value === "string" && value.trim() !== "") return value;
+      return undefined;
+    })
     .optional(),
 });
 

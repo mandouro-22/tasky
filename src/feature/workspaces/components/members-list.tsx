@@ -46,10 +46,7 @@ export default function MembersList() {
   const handleDeleteMember = async (memberId: string) => {
     const ok = await setConfirm();
     if (!ok) return;
-    DeleteMemberData(
-      { param: { memberId } },
-      { onSuccess: () => router.refresh() }
-    );
+    DeleteMemberData({ param: { memberId } });
   };
 
   return (

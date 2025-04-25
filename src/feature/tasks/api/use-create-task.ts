@@ -27,7 +27,6 @@ export const useCreateTask = () => {
       return await response.json();
     },
     onSuccess: ({ data }) => {
-      router.refresh();
       router.prefetch(
         `/workspaces/${data?.workspaceId}/projects/${data?.projectId}`
       );
