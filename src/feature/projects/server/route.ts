@@ -173,11 +173,24 @@ const Projects = new Hono()
     const user = c.get("user");
     const databases = c.get("databases");
     const { projectId } = c.req.param();
+    console.log("projectId 🆔", projectId);
     const project = await databases.getDocument<Project>(
       DATABASE_ID,
       PROJECTS_ID,
       projectId
     );
+
+    if (!projectId) {
+      return c.json(
+        {
+          success: false,
+          error: true,
+          message: "Missing projectId",
+          data: null,
+        },
+        400
+      );
+    }
 
     const member = await getMembers({
       databases,

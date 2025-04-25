@@ -21,8 +21,6 @@ export default function ProjectIdClient() {
   const { data: analytics, isLoading: isLoadingAnalytics } =
     useGetProjectAnalytics(projectId);
 
-  console.log(analytics);
-
   const isLoading = isLoadingAnalytics || isLoadingGetProject;
 
   if (isLoading) {

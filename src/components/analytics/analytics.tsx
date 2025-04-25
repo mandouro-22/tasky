@@ -14,6 +14,12 @@ export default function Analytics({ data }: ProjectAnalyticsResponseType) {
             variant={data?.taskDifference || 0 > 0 ? "up" : "down"}
             increaseValue={data?.taskDifference || 0}
           />
+          <AnalyticsCard
+            title="Assignee tasks"
+            value={data?.assigneeTaskCount ?? 0}
+            variant={data?.assigneeTaskDifference || 0 > 0 ? "up" : "down"}
+            increaseValue={data?.assigneeTaskCount ?? 0}
+          />
         </div>
       </div>
     </ScrollArea>
