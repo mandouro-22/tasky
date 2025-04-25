@@ -10,16 +10,26 @@ import React from "react";
 import { useGetProject } from "@/feature/projects/api/use-get-proejcts-by-id";
 import LoadingPage from "@/components/loading/Loading";
 import ErrorPage from "@/components/error/error";
+import { useGetProjectAnalytics } from "@/feature/projects/api/use-get-proejcts-analytics";
+import Analytics from "@/components/analytics/analytics";
 
 export default function ProjectIdClient() {
   const projectId = useProjectId();
-  const { data, isLoading } = useGetProject({ projectId });
+  const { data: project, isLoading: isLoadingGetProject } = useGetProject({
+    projectId,
+  });
+  const { data: analytics, isLoading: isLoadingAnalytics } =
+    useGetProjectAnalytics(projectId);
+
+  console.log(analytics);
+
+  const isLoading = isLoadingAnalytics || isLoadingGetProject;
 
   if (isLoading) {
     return <LoadingPage />;
   }
 
-  if (!data) {
+  if (!project || !analytics) {
     return <ErrorPage />;
   }
 
@@ -28,16 +38,16 @@ export default function ProjectIdClient() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-x-2">
           <ProjectAvatar
-            name={data?.data?.name as string}
-            image={data?.data?.imageUrl}
+            name={project?.data?.name as string}
+            image={project?.data?.imageUrl}
             className="size-10"
             fallbackClassName="size-10"
           />
-          <h1 className="text-base font-bold">{data?.data?.name}</h1>
+          <h1 className="text-base font-bold">{project?.data?.name}</h1>
         </div>
         <Button variant={"secondary"}>
           <Link
-            href={`/workspaces/${data?.data?.workspaceId}/projects/${data?.data?.$id}/settings`}
+            href={`/workspaces/${project?.data?.workspaceId}/projects/${project?.data?.$id}/settings`}
             className="flex items-center gap-2"
           >
             <Pen />
@@ -45,6 +55,7 @@ export default function ProjectIdClient() {
           </Link>
         </Button>
       </div>
+      {analytics.data ? <Analytics data={analytics.data} /> : null}
       <TaskViewSwitcher hideProjectFilter />
     </div>
   );
