@@ -22,6 +22,7 @@ import {
 import Link from "next/link";
 import { useLogin } from "../api/use-login";
 import { Loader } from "lucide-react";
+import { signUpWithGithub, signUpWithGoogle } from "@/lib/oAuth";
 
 export default function SignInCard() {
   // mutation
@@ -103,6 +104,7 @@ export default function SignInCard() {
 
       <CardContent className="flex flex-col gap-3">
         <Button
+          onClick={() => signUpWithGoogle()}
           variant={"secondary"}
           disabled={isPending}
           size={"lg"}
@@ -112,6 +114,7 @@ export default function SignInCard() {
           Sign In With Google
         </Button>
         <Button
+          onClick={() => signUpWithGithub()}
           variant={"secondary"}
           disabled={isPending}
           size={"lg"}

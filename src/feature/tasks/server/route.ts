@@ -1,6 +1,6 @@
 import { DATABASE_ID, MEMBERS_ID, PROJECTS_ID, TASKS_ID } from "@/config";
 import { getMembers } from "@/feature/members/utils";
-import { CreateAdminClient } from "@/lib/appwrite";
+import { createAdminClient } from "@/lib/appwrite";
 import { sessionMiddleware } from "@/lib/session_middleware";
 import {
   createTaskSchema,
@@ -21,7 +21,7 @@ const Tasks = new Hono()
     sessionMiddleware,
     zValidator("query", getTaskSchema),
     async (c) => {
-      const { users } = await CreateAdminClient();
+      const { users } = await createAdminClient();
       const databases = c.get("databases");
       const user = c.get("user");
       const { workspaceId, assigneeId, dueDate, projectId, search, status } =
@@ -78,7 +78,7 @@ const Tasks = new Hono()
 
           return {
             ...member,
-            name: user.name,
+            name: user.name || user.email,
             email: user.email,
           };
         })
@@ -114,7 +114,7 @@ const Tasks = new Hono()
   .get("/:taskId", sessionMiddleware, async (c) => {
     const currentUser = c.get("user");
     const databases = c.get("databases");
-    const { users } = await CreateAdminClient();
+    const { users } = await createAdminClient();
     const { taskId } = c.req.param();
 
     const task = await databases.getDocument<Task>(
@@ -156,7 +156,7 @@ const Tasks = new Hono()
 
     const assignee = {
       ...members,
-      name: user.name,
+      name: user.name || user.email,
       email: user.email,
     };
 

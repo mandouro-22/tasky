@@ -1,4 +1,4 @@
-import { CreateAdminClient } from "@/lib/appwrite";
+import { createAdminClient } from "@/lib/appwrite";
 import { sessionMiddleware } from "@/lib/session_middleware";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
@@ -14,7 +14,7 @@ const members = new Hono()
     sessionMiddleware,
     zValidator("query", z.object({ workspaceId: z.string() })),
     async (c) => {
-      const { users } = await CreateAdminClient();
+      const { users } = await createAdminClient();
       const databases = c.get("databases");
       const user = c.get("user");
       const { workspaceId } = c.req.valid("query");
@@ -47,7 +47,7 @@ const members = new Hono()
 
           return {
             ...member,
-            name: user.name,
+            name: user.name || user.email,
             email: user.email,
           };
         })

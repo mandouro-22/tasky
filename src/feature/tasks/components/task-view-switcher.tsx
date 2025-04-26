@@ -16,6 +16,7 @@ import { DataKanban, TaskStatus } from "./kanban-board/data-kanban";
 import { TasksStatus } from "../type";
 import { useBulkEditTask } from "../api/use-bulk-update-task";
 import { DataCalendar } from "./calendar-board/data-calendar";
+import { useProjectId } from "@/feature/projects/hooks/use-project-id";
 
 interface Tasks {
   $id: string;
@@ -34,12 +35,13 @@ export default function TaskViewSwitcher({
     defaultValue: "tabel",
   });
   const [{ assigneeId, dueDate, projectId, search, status }] = useTasksFilter();
+  const paramProjectId = useProjectId();
   const workspaceId = useWorkspaceId();
   const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({
     workspaceId,
     search: search ?? undefined,
     status: status ?? undefined,
-    projectId: projectId ?? undefined,
+    projectId: projectId || paramProjectId,
     assigneeId: assigneeId ?? undefined,
     dueDate: dueDate ?? undefined,
   });

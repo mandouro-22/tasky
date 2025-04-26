@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/form";
 import { useRegister } from "../api/use-register";
 import { Loader } from "lucide-react";
+import { signUpWithGithub, signUpWithGoogle } from "@/lib/oAuth";
 
 export default function SignUpCard() {
   // mutation
@@ -143,6 +144,7 @@ export default function SignUpCard() {
 
       <CardContent className="flex flex-col gap-3">
         <Button
+          onClick={() => signUpWithGoogle()}
           variant={"secondary"}
           disabled={isPending}
           size={"lg"}
@@ -152,6 +154,7 @@ export default function SignUpCard() {
           Sign In With Google
         </Button>
         <Button
+          onClick={() => signUpWithGithub()}
           variant={"secondary"}
           disabled={isPending}
           size={"lg"}
