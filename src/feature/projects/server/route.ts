@@ -113,10 +113,11 @@ const Projects = new Hono()
         );
       }
 
-      const projects = await databases.listDocuments(DATABASE_ID, PROJECTS_ID, [
-        Query.equal("workspaceId", workspaceId),
-        Query.orderDesc("$createdAt"),
-      ]);
+      const projects = await databases.listDocuments<Project>(
+        DATABASE_ID,
+        PROJECTS_ID,
+        [Query.equal("workspaceId", workspaceId), Query.orderDesc("$createdAt")]
+      );
 
       return c.json(
         {
@@ -173,7 +174,7 @@ const Projects = new Hono()
     const user = c.get("user");
     const databases = c.get("databases");
     const { projectId } = c.req.param();
-    console.log("projectId 🆔", projectId);
+
     const project = await databases.getDocument<Project>(
       DATABASE_ID,
       PROJECTS_ID,

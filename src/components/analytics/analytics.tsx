@@ -1,6 +1,6 @@
 import { ProjectAnalyticsResponseType } from "@/feature/projects/api/use-get-proejcts-analytics";
 import React from "react";
-import { ScrollArea } from "../ui/scroll-area";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import AnalyticsCard from "./analytics-card";
 
 export default function Analytics({ data }: ProjectAnalyticsResponseType) {
@@ -14,6 +14,8 @@ export default function Analytics({ data }: ProjectAnalyticsResponseType) {
             variant={data?.taskDifference || 0 > 0 ? "up" : "down"}
             increaseValue={data?.taskDifference || 0}
           />
+        </div>
+        <div className="flex items-center flex-1">
           <AnalyticsCard
             title="Assignee tasks"
             value={data?.assigneeTaskCount ?? 0}
@@ -21,7 +23,32 @@ export default function Analytics({ data }: ProjectAnalyticsResponseType) {
             increaseValue={data?.assigneeTaskCount ?? 0}
           />
         </div>
+        <div className="flex items-center flex-1">
+          <AnalyticsCard
+            title="Completed tasks"
+            value={data?.completedTask ?? 0}
+            variant={data?.completedTaskDifference || 0 > 0 ? "up" : "down"}
+            increaseValue={data?.completedTask ?? 0}
+          />
+        </div>
+        <div className="flex items-center flex-1">
+          <AnalyticsCard
+            title="Incomplete tasks"
+            value={data?.inCompletedTask ?? 0}
+            variant={data?.inCompletedTaskDifference || 0 > 0 ? "up" : "down"}
+            increaseValue={data?.inCompletedTask ?? 0}
+          />
+        </div>
+        <div className="flex items-center flex-1">
+          <AnalyticsCard
+            title="Over Due tasks"
+            value={data?.overDueTask ?? 0}
+            variant={data?.overDueTaskDifference || 0 > 0 ? "up" : "down"}
+            increaseValue={data?.overDueTask ?? 0}
+          />
+        </div>
       </div>
+      <ScrollBar orientation="horizontal" />
     </ScrollArea>
   );
 }
