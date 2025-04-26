@@ -30,6 +30,8 @@ export const useEditTask = () => {
 
     onSuccess: ({ data }) => {
       toast.success("Update Task Successfully");
+      queryClient.invalidateQueries({ queryKey: ["workspace-analytics"] });
+      queryClient.invalidateQueries({ queryKey: ["project-analytics"] });
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["task", data?.$id] });
     },

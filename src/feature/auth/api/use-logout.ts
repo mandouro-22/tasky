@@ -24,8 +24,7 @@ export const useLogout = () => {
     onSuccess: () => {
       router.replace("/sign-in");
       toast.success("Logout successfully 👍🏻");
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-      queryClient.invalidateQueries({ queryKey: ["workspaces"] });
+      queryClient.invalidateQueries();
       queryClient.clear();
     },
 

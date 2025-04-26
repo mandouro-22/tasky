@@ -55,7 +55,7 @@ export function MembersList({ data, total }: MembersListProps) {
           </li>
         </ul>
         <Button variant={"muted"} className="mt-4 w-full">
-          <Link href={`/workspaces/${workspaceId}/tasks`}>show All</Link>
+          <Link href={`/workspaces/${workspaceId}/members`}>show All</Link>
         </Button>
       </div>
     </div>

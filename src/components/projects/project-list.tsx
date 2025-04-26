@@ -44,20 +44,6 @@ export function ProjectList({ data, total }: ProjectListProps) {
                     <p className="text-lg font-medium truncate">
                       {project.name}
                     </p>
-
-                    {/*<p className="text-lg font-medium truncate capitalize">
-                      {project.name}
-                    </p>
-                    <div className="flex items-center gap-x-2">
-                      <p>{project.project.name}</p>
-                      <div className="size-1 rounded-full bg-neutral-300" />
-                      <div className="text-sm text-muted-foreground flex items-center">
-                        <CalendarIcon className="size-3 mr-1" />
-                        <span className="truncate">
-                          {formatDistanceToNow(new Date(project.dueDate))}
-                        </span>
-                      </div>
-                    </div>*/}
                   </CardContent>
                 </Card>
               </Link>
@@ -67,9 +53,10 @@ export function ProjectList({ data, total }: ProjectListProps) {
             No Projects Found
           </li>
         </ul>
-        <Button variant={"muted"} className="mt-4 w-full">
-          <Link href={`/workspaces/${workspaceId}/tasks`}>show All</Link>
-        </Button>
+        {/* TODO: add button show all project  */}
+        {/* <Button variant={"muted"} className="mt-4 w-full">
+          <Link href={`/workspaces/${workspaceId}/projects`}>show All</Link>
+        </Button> */}
       </div>
     </div>
   );

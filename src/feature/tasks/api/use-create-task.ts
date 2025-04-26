@@ -31,6 +31,8 @@ export const useCreateTask = () => {
         `/workspaces/${data?.workspaceId}/projects/${data?.projectId}`
       );
       toast.success("Added Task Successfully");
+      queryClient.invalidateQueries({ queryKey: ["workspace-analytics"] });
+      queryClient.invalidateQueries({ queryKey: ["project-analytics"] });
       queryClient.invalidateQueries({
         queryKey: ["tasks"],
       });
