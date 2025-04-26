@@ -6,7 +6,7 @@ import { z } from "zod";
 import { getMembers } from "../utils";
 import { DATABASE_ID, MEMBERS_ID } from "@/config";
 import { Query } from "node-appwrite";
-import { Member_Role } from "../types/type";
+import { Member, Member_Role } from "../types/type";
 
 const members = new Hono()
   .get(
@@ -35,9 +35,11 @@ const members = new Hono()
         });
       }
 
-      const members = await databases.listDocuments(DATABASE_ID, MEMBERS_ID, [
-        Query.equal("workspaceId", workspaceId),
-      ]);
+      const members = await databases.listDocuments<Member>(
+        DATABASE_ID,
+        MEMBERS_ID,
+        [Query.equal("workspaceId", workspaceId)]
+      );
 
       const populatedMembers = await Promise.all(
         members.documents.map(async (member) => {
