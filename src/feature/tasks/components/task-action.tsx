@@ -15,17 +15,20 @@ import useConfirm from "@/hooks/use-confirm";
 import { useRouter } from "next/navigation";
 import { useWorkspaceId } from "@/feature/workspaces/hooks/use-workspace-id";
 import { useEditTaskModel } from "../hooks/use-edit-tasks-model";
+import { cn } from "@/lib/utils";
 
 interface TaskActionProps {
   id: string;
   projectId: string;
   children: React.ReactNode;
+  className?: string;
 }
 
 export default function TaskAction({
   id,
   projectId,
   children,
+  className,
 }: TaskActionProps) {
   const [ConfirmDelete, confirm] = useConfirm(
     "Delete Task",
@@ -51,7 +54,7 @@ export default function TaskAction({
   const { open } = useEditTaskModel();
 
   return (
-    <div className="flex justify-end">
+    <div className={cn("flex justify-end", className)}>
       <ConfirmDelete />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>

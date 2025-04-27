@@ -20,7 +20,7 @@ export default function SettingPorject() {
   }
 
   return (
-    <div className="w-full lg:max-w-xl mx-auto">
+    <div className="w-full lg:max-w-screen-xl mx-auto rounded-lg">
       <EditProjectForm initialValue={initialValues.data as Project} />
     </div>
   );

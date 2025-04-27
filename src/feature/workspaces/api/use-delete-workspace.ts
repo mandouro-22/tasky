@@ -21,6 +21,8 @@ export function useDeleteWorkspace() {
         param,
       });
 
+      if (!response.ok) throw new Error("Failed to delete workspace");
+
       return await response.json();
     },
 

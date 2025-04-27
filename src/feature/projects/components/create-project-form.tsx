@@ -128,7 +128,7 @@ export default function CreateProjectsForm({
                     <div className="flex flex-col">
                       <p className="text-sm">Project Icon</p>
                       <p className="text-xs text-muted-foreground">
-                        Upload a project icon. (PNG, JPG, svg, JPEG), max 2mb
+                        Upload a project icon. (PNG, JPG, svg, JPEG), max 1mb
                       </p>
 
                       <Input

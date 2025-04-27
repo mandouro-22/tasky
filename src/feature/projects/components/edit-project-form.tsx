@@ -15,10 +15,8 @@ import { Label } from "@/components/ui/label";
 import useConfirm from "@/hooks/use-confirm";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ArrowLeft, ImageIcon, Loader } from "lucide-react";
+import { ArrowLeft, Loader } from "lucide-react";
 import { useRef } from "react";
-import Image from "next/image";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Project } from "../type";
 import { useRouter } from "next/navigation";
 import { useUpdateProject } from "../api/use-update-project";
@@ -26,7 +24,9 @@ import {
   UpdateProjectSchema,
   UpdateProjectSchemaType,
 } from "@/validations/projects/project-schema";
-import { useDeleteProject } from "../api/use-delete-workspace";
+import { useDeleteProject } from "../api/use-delete-project";
+import { ImagePreview } from "@/components/image/image-prev";
+import { toast } from "sonner";
 
 interface EditWorkspaceFormProps {
   onCancel?: () => void;
@@ -43,7 +43,7 @@ export default function EditProjectForm({
 
   const [DeleteDialog, confirmDialog] = useConfirm(
     "Delete Project",
-    "This action cannot be undone.",
+    "This action will permanently delete this project and all its associated data. This cannot be undone.",
     "destructive"
   );
   const inputRef = useRef<HTMLInputElement>(null);
@@ -70,8 +70,23 @@ export default function EditProjectForm({
 
   const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      form.setValue("imageUrl", file);
+    if (!file) return;
+
+    if (file.size > 1024 * 1024) {
+      toast.error("Image size must be less then 1MB.");
+      return;
+    }
+
+    form.setValue("imageUrl", file);
+  };
+
+  const handleBackNavigation = () => {
+    if (onCancel) {
+      onCancel();
+    } else {
+      router.push(
+        `/workspaces/${initialValue.workspaceId}/projects/${initialValue.$id}`
+      );
     }
   };
 
@@ -88,7 +103,7 @@ export default function EditProjectForm({
   };
 
   return (
-    <div className="flex flex-col gap-y-4 w-full sm:w-fit mx-auto">
+    <div className="flex flex-col gap-y-4 w-full">
       <DeleteDialog />
       <Card className="w-full h-full border-none shadow-none">
         <CardHeader className="flex flex-grow gap-x-4 p-7 max-sm:!px-0 space-y-0">
@@ -96,14 +111,7 @@ export default function EditProjectForm({
             <Button
               type="button"
               variant={"secondary"}
-              onClick={
-                onCancel
-                  ? onCancel
-                  : () =>
-                      router.push(
-                        `/workspaces/${initialValue.workspaceId}/projects/${initialValue.$id}`
-                      )
-              }
+              onClick={handleBackNavigation}
               disabled={isPending}
             >
               <ArrowLeft />
@@ -146,30 +154,12 @@ export default function EditProjectForm({
                 render={({ field }) => (
                   <FormItem className="mt-6">
                     <div className="flex gap-4">
-                      {field.value ? (
-                        <Image
-                          src={
-                            field.value instanceof File
-                              ? URL.createObjectURL(field.value)
-                              : field.value || ""
-                          }
-                          width={73}
-                          height={73}
-                          alt="project Image"
-                          className="object-cover size-[73px] rounded-md"
-                        />
-                      ) : (
-                        <Avatar className="size-[73px]">
-                          <AvatarFallback>
-                            <ImageIcon className="size-[36px] text-neutral-500" />
-                          </AvatarFallback>
-                        </Avatar>
-                      )}
+                      <ImagePreview value={field.value ?? null} />
 
                       <div className="flex flex-col">
                         <p className="text-sm">Project Icon</p>
                         <p className="text-xs text-muted-foreground">
-                          Upload a project icon. (PNG, JPG, svg, JPEG), max 2mb
+                          Upload a project icon. (PNG, JPG, svg, JPEG), max 1mb
                         </p>
 
                         <Input
@@ -232,7 +222,8 @@ export default function EditProjectForm({
           <div className="flex flex-col">
             <h3 className="font-bold">Danger Zone</h3>
             <p className="text-sm text-muted-foreground">
-              Deleting a Project is irreversible and will remove all associated
+              Once you delete a project, there is no going back. This action
+              cannot be undone.
             </p>
             <Button
               type="button"

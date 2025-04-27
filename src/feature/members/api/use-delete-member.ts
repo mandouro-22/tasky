@@ -19,6 +19,10 @@ export function useDeleteMember() {
         param,
       });
 
+      if (!response.ok) {
+        throw new Error("Failed to delete member");
+      }
+
       return await response.json();
     },
 

@@ -1,10 +1,8 @@
 import Link from "next/link";
-import { PlusIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import DottedSeparatoo from "../dotted-separator";
 import { Card, CardContent } from "../ui/card";
 import { useWorkspaceId } from "@/feature/workspaces/hooks/use-workspace-id";
-import { useCreateProjectModel } from "@/feature/projects/hooks/use-create-projects-model";
 import { Member } from "@/feature/members/types/type";
 import MemberAvatar from "@/feature/members/components/member-avatar";
 
@@ -15,16 +13,12 @@ interface MembersListProps {
 
 export function MembersList({ data, total }: MembersListProps) {
   const workspaceId = useWorkspaceId();
-  const { open: createTask } = useCreateProjectModel();
 
   return (
     <div className="flex flex-col gap-y-4 col-span-1">
       <div className="bg-white border rounded-lg p-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-start">
           <p className="text-lg font-semibold">Members ({total})</p>
-          <Button variant={"secondary"} size={"icon"} onClick={createTask}>
-            <PlusIcon className="size-4 text-neutral-400 hover:text-neutral-600" />
-          </Button>
         </div>
         <DottedSeparatoo className="my-4" />
         <ul className="grid grid-col-1 sm:grid-col-2 lg:grid-col-3 gap-4">

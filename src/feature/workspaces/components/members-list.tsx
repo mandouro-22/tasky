@@ -64,7 +64,7 @@ export default function MembersList() {
         <CardTitle className="font-bold text-xl">Members List</CardTitle>
       </CardHeader>
 
-      <CardContent className="p-7">
+      <CardContent className="p-7 md:w-2/5 md:mx-auto">
         {data?.data?.documents.map((member, index) => {
           return (
             <Fragment key={index}>

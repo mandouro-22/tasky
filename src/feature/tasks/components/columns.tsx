@@ -33,6 +33,7 @@ export const columns: ColumnDef<Task>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Project
+          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
@@ -59,6 +60,7 @@ export const columns: ColumnDef<Task>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Assignee
+          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
@@ -85,6 +87,7 @@ export const columns: ColumnDef<Task>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Due Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
@@ -106,13 +109,14 @@ export const columns: ColumnDef<Task>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
       const status = row.original.status as TasksStatus;
       return (
-        <div className="flex items-center gap-x-2 text-sm font-medium ">
+        <div className="flex items-center gap-x-2 text-sm font-medium">
           <Badge variant={status} className="capitalize">
             {snakeCaseToTitleCase(status)}
           </Badge>
@@ -128,7 +132,7 @@ export const columns: ColumnDef<Task>[] = [
       const projectId = row.original.projectId;
 
       return (
-        <TaskAction id={id} projectId={projectId}>
+        <TaskAction id={id} projectId={projectId} className="justify-start">
           <Button size={"sm"} variant={"ghost"}>
             <MoreVertical />
           </Button>

@@ -47,10 +47,8 @@ const Status = [
 ];
 
 export default function DataFilter({ hideProjectFilter }: DataFilterProps) {
-  const [{ assigneeId, dueDate, projectId, search, status }, setFilter] =
+  const [{ assigneeId, dueDate, projectId, status }, setFilter] =
     useTasksFilter();
-
-  console.log(hideProjectFilter, search);
 
   const workspaceId = useWorkspaceId();
   const { data: project, isLoading: isLoadingProject } = useGetProjects({

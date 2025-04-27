@@ -21,6 +21,8 @@ export function useUpdateInviteCodeWorkspace() {
         param,
       });
 
+      if (!response.ok) throw new Error("Failed to reset invite code");
+
       return await response.json();
     },
 

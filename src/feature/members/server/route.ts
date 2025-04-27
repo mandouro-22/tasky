@@ -26,13 +26,15 @@ const members = new Hono()
       });
 
       if (!member) {
-        return c.json({
-          status: 403,
-          success: false,
-          error: true,
-          message: "UnAuthorized",
-          data: null,
-        });
+        return c.json(
+          {
+            success: false,
+            error: true,
+            message: "UnAuthorized",
+            data: null,
+          },
+          403
+        );
       }
 
       const members = await databases.listDocuments<Member>(
@@ -53,16 +55,18 @@ const members = new Hono()
         })
       );
 
-      return c.json({
-        status: 200,
-        success: true,
-        error: false,
-        message: "Get Memebers Successfully",
-        data: {
-          ...members,
-          documents: populatedMembers,
+      return c.json(
+        {
+          success: true,
+          error: false,
+          message: "Get Memebers Successfully",
+          data: {
+            ...members,
+            documents: populatedMembers,
+          },
         },
-      });
+        200
+      );
     }
   )
 
@@ -90,49 +94,57 @@ const members = new Hono()
     });
 
     if (!member) {
-      return c.json({
-        status: 403,
-        success: false,
-        error: true,
-        message: "UnAuthorized",
-        data: null,
-      });
+      return c.json(
+        {
+          success: false,
+          error: true,
+          message: "UnAuthorized",
+          data: null,
+        },
+        403
+      );
     }
 
     if (
       member.$id !== memberToDelete.$id &&
       member.role !== Member_Role.ADMIN
     ) {
-      return c.json({
-        status: 403,
-        success: false,
-        error: true,
-        message: "UnAuthorized",
-        data: null,
-      });
+      return c.json(
+        {
+          success: false,
+          error: true,
+          message: "UnAuthorized",
+          data: null,
+        },
+        403
+      );
     }
 
     if (allMembersInWorkspace.total === 1) {
-      return c.json({
-        status: 400,
-        success: false,
-        error: true,
-        message: "Cannot delete the only member",
-        data: null,
-      });
+      return c.json(
+        {
+          success: false,
+          error: true,
+          message: "Cannot delete the only member",
+          data: null,
+        },
+        400
+      );
     }
 
     await databases.deleteDocument(DATABASE_ID, MEMBERS_ID, memberId);
 
-    return c.json({
-      status: 200,
-      success: true,
-      error: false,
-      message: "Deleted Member Successfully",
-      data: {
-        $id: memberToDelete.$id,
+    return c.json(
+      {
+        success: true,
+        error: false,
+        message: "Deleted Member Successfully",
+        data: {
+          $id: memberToDelete.$id,
+        },
       },
-    });
+      200
+    );
   })
   .patch(
     "/:memberId",
@@ -163,48 +175,56 @@ const members = new Hono()
       });
 
       if (!member) {
-        return c.json({
-          status: 403,
-          success: false,
-          error: true,
-          message: "UnAuthorized",
-          data: null,
-        });
+        return c.json(
+          {
+            success: false,
+            error: true,
+            message: "UnAuthorized",
+            data: null,
+          },
+          403
+        );
       }
 
       if (member.role !== Member_Role.ADMIN) {
-        return c.json({
-          status: 403,
-          success: false,
-          error: true,
-          message: "UnAuthorized",
-          data: null,
-        });
+        return c.json(
+          {
+            success: false,
+            error: true,
+            message: "UnAuthorized",
+            data: null,
+          },
+          403
+        );
       }
 
       if (allMembersInWorkspace.total === 1) {
-        return c.json({
-          status: 400,
-          success: false,
-          error: true,
-          message: "Cannot downgrade the only member",
-          data: null,
-        });
+        return c.json(
+          {
+            success: false,
+            error: true,
+            message: "Cannot downgrade the only member",
+            data: null,
+          },
+          400
+        );
       }
 
       await databases.updateDocument(DATABASE_ID, MEMBERS_ID, memberId, {
         role,
       });
 
-      return c.json({
-        status: 200,
-        success: true,
-        error: false,
-        message: "Updated Member Successfully",
-        data: {
-          $id: memberId,
+      return c.json(
+        {
+          success: true,
+          error: false,
+          message: "Updated Member Successfully",
+          data: {
+            $id: memberId,
+          },
         },
-      });
+        200
+      );
     }
   );
 

@@ -448,13 +448,15 @@ const Projects = new Hono()
     });
 
     if (!memeber) {
-      return c.json({
-        status: 401,
-        success: false,
-        error: true,
-        message: "UnAuthorized",
-        data: null,
-      });
+      return c.json(
+        {
+          success: false,
+          error: true,
+          message: "UnAuthorized",
+          data: null,
+        },
+        403
+      );
     }
 
     await databases.deleteDocument(DATABASE_ID, PROJECTS_ID, projectId);
