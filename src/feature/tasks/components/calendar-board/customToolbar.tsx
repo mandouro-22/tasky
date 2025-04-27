@@ -12,7 +12,7 @@ export default function CustomToolbar({
   onNavigate,
 }: CustomToolbarProps) {
   return (
-    <div className="flex mb-4 gap-x-4 items-center w-full lg:w-auto justify-center lg:justify-start">
+    <div className="flex gap-x-4 items-center w-full lg:w-auto justify-center lg:justify-start">
       <Button
         size={"icon"}
         variant={"secondary"}

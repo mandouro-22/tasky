@@ -1,7 +1,6 @@
 import Link from "next/link";
-import Logo from "../../../public/assets/logo.png";
-import Image from "next/image";
 import { UserButton } from "@/feature/auth/components/user-button";
+import Logo from "@/components/logo/logo";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,13 +11,7 @@ export default function layout({ children }: LayoutProps) {
       <div className="mx-auto max-w-screen-2xl gap-2 px-4 py-2.5">
         <nav className="flex items-center justify-between h-[74px]">
           <Link href={"/"}>
-            <Image
-              src={Logo}
-              alt="logo"
-              height={40}
-              width={70}
-              className="object-cover"
-            />
+            <Logo />
           </Link>
 
           <UserButton />

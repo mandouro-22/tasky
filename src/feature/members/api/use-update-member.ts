@@ -20,6 +20,10 @@ export function useUpdateMember() {
         param,
       });
 
+      if (!response.ok) {
+        throw new Error("Failed to update member");
+      }
+
       return await response.json();
     },
 

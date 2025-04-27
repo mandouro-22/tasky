@@ -48,13 +48,15 @@ const app = new Hono()
       [Query.orderDesc("$createdAt"), Query.contains("$id", workspacesId)]
     );
 
-    return c.json({
-      status: 200,
-      success: true,
-      message: "get workspace successuflly",
-      error: null,
-      data: workspaces,
-    });
+    return c.json(
+      {
+        success: true,
+        message: "get workspace successuflly",
+        error: null,
+        data: workspaces,
+      },
+      200
+    );
   })
 
   .get("/:workspaceId", sessionMiddleware, async (c) => {
@@ -422,13 +424,15 @@ const app = new Hono()
     // TODO: Delete Members, Projects, and Tasks
 
     if (!member || member.role !== Member_Role.ADMIN)
-      return c.json({
-        status: 401,
-        success: false,
-        error: true,
-        message: "UnAuthorized",
-        data: null,
-      });
+      return c.json(
+        {
+          success: false,
+          error: true,
+          message: "UnAuthorized",
+          data: null,
+        },
+        403
+      );
 
     await databases.deleteDocument(DATABASE_ID, WORKSPACES_ID, workspaceId);
 
@@ -454,13 +458,15 @@ const app = new Hono()
     });
 
     if (!member || member.role !== Member_Role.ADMIN)
-      return c.json({
-        status: 401,
-        success: false,
-        error: true,
-        message: "UnAuthorized",
-        data: null,
-      });
+      return c.json(
+        {
+          success: false,
+          error: true,
+          message: "UnAuthorized",
+          data: null,
+        },
+        403
+      );
 
     const workspace = await databases.updateDocument(
       DATABASE_ID,

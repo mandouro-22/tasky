@@ -9,8 +9,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import DottedSeparatoo from "@/components/dotted-separator";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-// import { redirect } from "next/navigation";
-// import { useEffect } from "react";
 import { useLogout } from "../api/use-logout";
 
 export const UserButton = () => {

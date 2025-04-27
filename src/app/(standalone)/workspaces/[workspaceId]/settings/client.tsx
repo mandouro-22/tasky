@@ -20,7 +20,7 @@ export default function SettingWorkspace() {
   }
 
   return (
-    <div className="w-full lg:max-w-xl mx-auto">
+    <div className="w-full lg:max-w-screen-xl mx-auto">
       <EditWorkspaceForm initialValue={initialValues.data as Workspace} />
     </div>
   );

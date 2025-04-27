@@ -7,7 +7,7 @@ export default async function MembersPage() {
   if (!user) return redirect("/sign-in");
 
   return (
-    <div className="w-full lg:max-w-xl mx-auto">
+    <div className="w-full lg:max-w-screen-xl mx-auto">
       <MembersList />
     </div>
   );

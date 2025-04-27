@@ -12,13 +12,11 @@ export function buildTaskQuery(
 
   for (const [key, value] of Object.entries(filters)) {
     if (value) {
-      console.log(`${key}: ${value}`);
       query.push(Query.equal(key, value));
     }
   }
 
   if (search) {
-    console.log(`${search}: ${search}`);
     query.push(Query.search("name", search));
   }
   return query;

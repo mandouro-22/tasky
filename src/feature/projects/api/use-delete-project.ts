@@ -21,6 +21,8 @@ export function useDeleteProject() {
         param,
       });
 
+      if (!response.ok) throw new Error("Failed to delete Project");
+
       return await response.json();
     },
 
