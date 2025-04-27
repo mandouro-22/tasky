@@ -19,16 +19,15 @@ import {
 import useConfirm from "@/hooks/use-confirm";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ArrowLeft, CopyIcon, ImageIcon, Loader } from "lucide-react";
+import { ArrowLeft, CopyIcon, Loader } from "lucide-react";
 import { useRef } from "react";
-import Image from "next/image";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Workspace } from "../type";
 import { useUpdateWorkspace } from "../api/use-update-workspace";
 import { useRouter } from "next/navigation";
 import { useDeleteWorkspace } from "../api/use-delete-workspace";
 import { toast } from "sonner";
 import { useUpdateInviteCodeWorkspace } from "../api/use-update-invaite-code-workspace";
+import { ImagePreview } from "@/components/image/image-prev";
 
 interface EditWorkspaceFormProps {
   onCancel?: () => void;
@@ -89,8 +88,21 @@ export default function EditWorkspaceForm({
 
   const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      form.setValue("imageUrl", file);
+    if (!file) return;
+
+    if (file.size > 1024 * 1024) {
+      toast.error("Image size must be less then 1MB.");
+      return;
+    }
+
+    form.setValue("imageUrl", file);
+  };
+
+  const handleBackNavigation = () => {
+    if (onCancel) {
+      onCancel();
+    } else {
+      router.push(`/workspaces/${initialValue.$id}`);
     }
   };
 
@@ -120,7 +132,7 @@ export default function EditWorkspaceForm({
   };
 
   return (
-    <div className="flex flex-col gap-y-4 w-full sm:w-fit mx-auto">
+    <div className="flex flex-col gap-y-4 w-full mx-auto">
       <DeleteDialog />
       <ResetDialog />
       <Card className="w-full h-full border-none shadow-none">
@@ -129,11 +141,7 @@ export default function EditWorkspaceForm({
             <Button
               type="button"
               variant={"secondary"}
-              onClick={
-                onCancel
-                  ? onCancel
-                  : () => router.push(`/workspaces/${initialValue.$id}`)
-              }
+              onClick={handleBackNavigation}
               disabled={isPending}
             >
               <ArrowLeft />
@@ -176,25 +184,7 @@ export default function EditWorkspaceForm({
                 render={({ field }) => (
                   <FormItem className="mt-6">
                     <div className="flex gap-4">
-                      {field.value ? (
-                        <Image
-                          src={
-                            field.value instanceof File
-                              ? URL.createObjectURL(field.value)
-                              : field.value || ""
-                          }
-                          width={73}
-                          height={73}
-                          alt="Workspace Image"
-                          className="object-cover size-[73px] rounded-md"
-                        />
-                      ) : (
-                        <Avatar className="size-[73px]">
-                          <AvatarFallback>
-                            <ImageIcon className="size-[36px] text-neutral-500" />
-                          </AvatarFallback>
-                        </Avatar>
-                      )}
+                      <ImagePreview value={field.value ?? null} />
 
                       <div className="flex flex-col">
                         <p className="text-sm">Workspace Icon</p>

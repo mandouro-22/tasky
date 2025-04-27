@@ -1,9 +1,8 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
-import Logo from "../../../public/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
+import Logo from "@/components/logo/logo";
 
 interface ChildrenProps {
   children: React.ReactNode;
@@ -17,14 +16,7 @@ export default function AuthLayout({ children }: ChildrenProps) {
       <div className="bg-neutral-50 min-h-screen">
         <div className="mx-auto max-w-screen-2xl p-4">
           <nav className="flex items-center justify-between">
-            <Image
-              src={Logo}
-              height={50}
-              width={80}
-              className="object-cover"
-              alt="logo"
-              loading="lazy"
-            />
+            <Logo />
 
             <Button asChild variant={"secondary"}>
               <Link href={isLoginIn ? "/sign-up" : "/sign-in"}>
