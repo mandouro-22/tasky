@@ -18,7 +18,7 @@ export const useLogin = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Login Failed");
+        throw new Error(errorData || "Login Failed");
       }
 
       return await response.json();
