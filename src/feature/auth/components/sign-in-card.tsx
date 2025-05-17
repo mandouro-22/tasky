@@ -82,6 +82,7 @@ export default function SignInCard() {
                       type="password"
                       disabled={isPending}
                       placeholder="Enter Your Password"
+                      max={52}
                       {...field}
                     />
                   </FormControl>
