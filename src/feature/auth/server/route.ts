@@ -15,7 +15,7 @@ const app = new Hono()
       return c.json({
         status: 200,
         success: true,
-        message: "Get user successfuly",
+        message: "Get user successfully",
         data: user,
       });
     } catch (error) {
@@ -23,7 +23,7 @@ const app = new Hono()
       return c.json({
         status: 500,
         message: error,
-        seccess: false,
+        success: false,
         data: null,
       });
     }
@@ -44,21 +44,27 @@ const app = new Hono()
         maxAge: 60 * 60 * 24 * 30,
       });
 
-      return c.json({
-        success: true,
-        message: "Login Successfuly ✅",
-        data: {
-          email,
-          password,
+      return c.json(
+        {
+          success: true,
+          message: "Login Successfully ✅",
+          data: {
+            email,
+            password,
+          },
         },
-      });
+        200
+      );
     } catch (error) {
       console.error("error in login file in server" + error);
-      return c.json({
-        status: 500,
-        message: error,
-        success: false,
-      });
+      return c.json(
+        {
+          status: 500,
+          message: error,
+          success: false,
+        },
+        500
+      );
     }
   })
   .post("/register", zValidator("json", SignUpSchema), async (c) => {
@@ -76,18 +82,24 @@ const app = new Hono()
         maxAge: 60 * 60 * 24 * 30,
       });
 
-      return c.json({
-        success: true,
-        message: "create account successfuly",
-        data: user,
-      });
+      return c.json(
+        {
+          success: true,
+          message: "create account Successfully",
+          data: user,
+        },
+        500
+      );
     } catch (error) {
       console.error("error in register file in server" + error);
-      return c.json({
-        status: 500,
-        message: error,
-        success: false,
-      });
+      return c.json(
+        {
+          status: 500,
+          message: error,
+          success: false,
+        },
+        500
+      );
     }
   })
   .post("/logout", sessionMiddleware, async (c) => {
@@ -97,18 +109,24 @@ const app = new Hono()
       deleteCookie(c, AUTH_COOKIE);
       await account.deleteSession("current");
 
-      return c.json({
-        success: true,
-        error: null,
-        message: "Logout Successfuly",
-      });
+      return c.json(
+        {
+          success: true,
+          error: null,
+          message: "Logout Successfully",
+        },
+        200
+      );
     } catch (error) {
       console.error("error in logout file in server" + error);
-      return c.json({
-        status: 500,
-        message: error,
-        success: false,
-      });
+      return c.json(
+        {
+          status: 500,
+          message: error,
+          success: false,
+        },
+        500
+      );
     }
   });
 
