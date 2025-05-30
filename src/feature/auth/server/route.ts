@@ -12,20 +12,26 @@ const app = new Hono()
   .get("/current", sessionMiddleware, (c) => {
     try {
       const user = c.get("user");
-      return c.json({
-        status: 200,
-        success: true,
-        message: "Get user successfully",
-        data: user,
-      });
+      return c.json(
+        {
+          status: 200,
+          success: true,
+          message: "Get user successfully",
+          data: user,
+        },
+        200
+      );
     } catch (error) {
       console.error("error in current user in the server", error);
-      return c.json({
-        status: 500,
-        message: error,
-        success: false,
-        data: null,
-      });
+      return c.json(
+        {
+          status: 500,
+          message: error,
+          success: false,
+          data: null,
+        },
+        500
+      );
     }
   })
   .post("/login", zValidator("json", SignInSchema), async (c) => {
@@ -88,7 +94,7 @@ const app = new Hono()
           message: "create account Successfully",
           data: user,
         },
-        500
+        200
       );
     } catch (error) {
       console.error("error in register file in server" + error);
