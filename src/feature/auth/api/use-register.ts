@@ -20,7 +20,8 @@ export const useRegister = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Register Failed");
+        throw new Error(errorData || "Register Failed");
+        console.error(errorData);
       }
 
       return await response.json();
